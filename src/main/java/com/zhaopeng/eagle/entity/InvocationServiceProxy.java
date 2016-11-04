@@ -6,6 +6,7 @@ import com.zhaopeng.eagle.invoker.InvokerServiceHandler;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.UUID;
 
 /**
  * Created by zhaopeng on 2016/10/30.
@@ -27,10 +28,17 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
 
         InvokerServiceHandler hanlder=invokerConfig.chooseHandler();
 
-       String q=interfaceClass.getName()+"_"+method.getName()+"_"+args+"$_";
+       String q=interfaceClass.getName()+"_"+method.getName()+"_"+args;
+
+        Request request=new Request();
+        request.setRequestId(UUID.randomUUID().toString());
+        request.setClassName(interfaceClass.getName());
+        request.setMethodName(method.getName());
+        request.setParameters(args);
+        request.setParameterTypes(args.getClass().getClasses());
 
 
-       RPCFuture future= hanlder.sendRequest(q);
+       RPCFuture future= hanlder.sendRequest(request);
 
         return future.get();
 

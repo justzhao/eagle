@@ -13,18 +13,22 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class RPCFuture implements Future<Object> {
 
-    private   String result;
+
+
+    private Request request;
+
+    private Respone respone;
+
     private Lock lock;
 
     private Condition condition;
-    public RPCFuture(){
-        lock=new ReentrantLock();
-        condition=lock.newCondition();
+
+    public RPCFuture(Request request) {
+        lock = new ReentrantLock();
+        condition = lock.newCondition();
+        this.request=request;
     }
 
-    public RPCFuture(String result) {
-        this.result = result;
-    }
 
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
@@ -40,38 +44,51 @@ public class RPCFuture implements Future<Object> {
     public boolean isDone() {
         return false;
     }
+
     @Override
     public Object get() throws InterruptedException, ExecutionException {
 
         try {
             lock.lock();
-            if(result==null){
-                condition.await(1000,TimeUnit.MILLISECONDS);
+            if (respone == null) {
+                condition.await(1000, TimeUnit.MILLISECONDS);
             }
-            return result;
-        }finally {
+            return respone.getResult();
+        } finally {
             lock.unlock();
         }
 
     }
+
     @Override
     public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         return null;
     }
 
-    public  void done(){
+    public void done() {
         try {
             condition.signal();
-        }finally {
+        } finally {
             lock.unlock();
         }
     }
 
-    public String getResult() {
-        return result;
+
+
+
+    public Request getRequest() {
+        return request;
     }
 
-    public void setResult(String result) {
-        this.result = result;
+    public void setRequest(Request request) {
+        this.request = request;
+    }
+
+    public Respone getRespone() {
+        return respone;
+    }
+
+    public void setRespone(Respone respone) {
+        this.respone = respone;
     }
 }
