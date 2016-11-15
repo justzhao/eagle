@@ -2,7 +2,8 @@ package com.zhaopeng.eagle.invoker;
 
 import com.zhaopeng.eagle.entity.RPCFuture;
 import com.zhaopeng.eagle.entity.Request;
-import com.zhaopeng.eagle.entity.Respone;
+
+import com.zhaopeng.eagle.entity.Response;
 import io.netty.channel.*;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by zhaopeng on 2016/10/30.
  */
-public class InvokerServiceHandler extends SimpleChannelInboundHandler<Respone> {
+public class InvokerServiceHandler extends SimpleChannelInboundHandler<Response> {
 
 
     ConcurrentHashMap<String, RPCFuture> rpcFutureConcurrentHashMap = new ConcurrentHashMap<>();
@@ -19,18 +20,18 @@ public class InvokerServiceHandler extends SimpleChannelInboundHandler<Respone> 
 
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Respone respone) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, Response response) throws Exception {
 
         System.out.println("invoker  read !");
 
-        RPCFuture future = rpcFutureConcurrentHashMap.get(respone.getRequestId());
+        RPCFuture future = rpcFutureConcurrentHashMap.get(response.getRequestId());
         if (future != null) {
-            future.setRespone(respone);
-            rpcFutureConcurrentHashMap.remove(respone.getRequestId());
+            future.setResponse(response);
+            rpcFutureConcurrentHashMap.remove(response.getRequestId());
 
         } else {
 
-            System.out.println(" not respone !");
+            System.out.println(" not response !");
         }
 
     }

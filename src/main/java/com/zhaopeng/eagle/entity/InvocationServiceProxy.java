@@ -27,18 +27,15 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
         invokerConfig.connect();
 
         InvokerServiceHandler hanlder=invokerConfig.chooseHandler();
-
-       String q=interfaceClass.getName()+"_"+method.getName()+"_"+args;
-
         Request request=new Request();
         request.setRequestId(UUID.randomUUID().toString());
         request.setClassName(interfaceClass.getName());
         request.setMethodName(method.getName());
         request.setParameters(args);
-        request.setParameterTypes(args.getClass().getClasses());
+        request.setParameterTypes(method.getParameterTypes());
 
 
-       RPCFuture future= hanlder.sendRequest(request);
+         RPCFuture future= hanlder.sendRequest(request);
 
         return future.get();
 

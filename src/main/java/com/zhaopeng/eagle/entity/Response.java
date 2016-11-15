@@ -3,7 +3,7 @@ package com.zhaopeng.eagle.entity;
 /**
  * Created by zhaopeng on 2016/11/4.
  */
-public class Respone {
+public class Response {
 
     // 请求id
     private String requestId;

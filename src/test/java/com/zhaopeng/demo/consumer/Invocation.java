@@ -1,7 +1,7 @@
-package com.zhaopeng.eagle.remoting.consumer;
+package com.zhaopeng.demo.consumer;
 
+import com.zhaopeng.demo.api.StoreService;
 import com.zhaopeng.eagle.invoker.ProxyServiceFactory;
-import com.zhaopeng.eagle.remoting.api.StoreService;
 
 
 

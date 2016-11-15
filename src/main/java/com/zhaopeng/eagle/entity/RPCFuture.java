@@ -17,7 +17,7 @@ public class RPCFuture implements Future<Object> {
 
     private Request request;
 
-    private Respone respone;
+    private Response response;
 
     private Lock lock;
 
@@ -50,10 +50,10 @@ public class RPCFuture implements Future<Object> {
 
         try {
             lock.lock();
-            if (respone == null) {
+            if (response == null) {
                 condition.await(1000, TimeUnit.MILLISECONDS);
             }
-            return respone.getResult();
+            return response.getResult();
         } finally {
             lock.unlock();
         }
@@ -73,8 +73,13 @@ public class RPCFuture implements Future<Object> {
         }
     }
 
+    public Response getResponse() {
+        return response;
+    }
 
-
+    public void setResponse(Response response) {
+        this.response = response;
+    }
 
     public Request getRequest() {
         return request;
@@ -84,11 +89,5 @@ public class RPCFuture implements Future<Object> {
         this.request = request;
     }
 
-    public Respone getRespone() {
-        return respone;
-    }
 
-    public void setRespone(Respone respone) {
-        this.respone = respone;
-    }
 }

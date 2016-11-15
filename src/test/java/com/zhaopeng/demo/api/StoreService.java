@@ -1,4 +1,4 @@
-package com.zhaopeng.eagle.remoting.api;
+package com.zhaopeng.demo.api;
 
 /**
  * Created by zhaopeng on 2016/10/30.

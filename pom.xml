@@ -4,7 +4,7 @@
 
   <groupId>com.zhaopeng</groupId>
   <artifactId>eagle</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>${project.version}</version>
   <packaging>jar</packaging>
 
   <name>eagle</name>
@@ -12,6 +12,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.version>1.0.0</project.version>
+    <spring.version>4.3.4.RELEASE</spring.version>
   </properties>
 
   <dependencies>
@@ -27,6 +29,14 @@
       <artifactId>netty-all</artifactId>
       <version>5.0.0.Alpha1</version>
     </dependency>-->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+
+
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-all</artifactId>
@@ -49,7 +59,11 @@
       <artifactId>objenesis</artifactId>
       <version>2.1</version>
   </dependency>
-      
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>3.1</version>
+    </dependency>
   </dependencies>
 
   <build>
