@@ -7,19 +7,19 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
-
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 
 /**
  * Created by zhaopeng on 2016/10/29.
  */
-public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request> {
+public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request> implements ApplicationContextAware {
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, final Request request) throws Exception {
         // 根据传递的参数：类名，方法名，参数，实例化对象执行方法，返回结果。
         // 收到消息直接打印输出
-      //  System.out.println(ctx.channel().remoteAddress() + " Say : " + request.getRequestId());
-
         AsyncTaskSubmitUtil.submit(new Runnable() {
             @Override
             public void run() {
@@ -71,13 +71,10 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
         Class<?>[] parameterTypes = request.getParameterTypes();
         Object[] parameters = request.getParameters();
 
-
-
         // JDK reflect
         /*Method method = serviceClass.getMethod(methodName, parameterTypes);
         method.setAccessible(true);
         return method.invoke(serviceBean, parameters);*/
-
         // Cglib reflect
         FastClass serviceFastClass = FastClass.create(serviceClass);
         FastMethod serviceFastMethod = serviceFastClass.getMethod(methodName, parameterTypes);
@@ -85,4 +82,8 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
     }
 
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+
+    }
 }
