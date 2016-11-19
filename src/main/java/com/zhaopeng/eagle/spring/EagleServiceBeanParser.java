@@ -1,6 +1,5 @@
 package com.zhaopeng.eagle.spring;
 
-import com.zhaopeng.eagle.provider.config.ServiceFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -22,7 +21,7 @@ public class EagleServiceBeanParser implements BeanDefinitionParser {
         beanDefinition.getPropertyValues().addPropertyValue("ref", ref);
         parserContext.getRegistry().registerBeanDefinition(interfaceName, beanDefinition);
 
-        ServiceFactory.serverStart();
+
 
         return beanDefinition;
     }

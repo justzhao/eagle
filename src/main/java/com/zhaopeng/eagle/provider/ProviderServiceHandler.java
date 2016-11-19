@@ -85,5 +85,7 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 
+        System.out.println(applicationContext.getApplicationName());
+
     }
 }

@@ -1,15 +1,14 @@
 package com.zhaopeng.eagle.spring;
 
+import com.zhaopeng.eagle.provider.config.ServiceFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 
 /**
  * Created by zhaopeng on 2016/11/17.
  */
-public class EagleServiceBean implements ApplicationContextAware, ApplicationListener {
+public class EagleServiceBean implements ApplicationContextAware {
 
     private String interfaceName;
 
@@ -17,15 +16,14 @@ public class EagleServiceBean implements ApplicationContextAware, ApplicationLis
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        System.out.println("the ref is "+ref+" "+applicationContext.getBean(ref));
+        ServiceFactory.getInstance().getHandlerMap().put(interfaceName,applicationContext.getBean(ref));
+
         // 在这里设置好对应的service方法到 map中
         // MessageRecvExecutor.getInstance().getHandlerMap().put(interfaceName, applicationContext.getBean(ref));
 
     }
 
-    @Override
-    public void onApplicationEvent(ApplicationEvent applicationEvent) {
-
-    }
 
     public String getInterfaceName() {
         return interfaceName;

@@ -10,16 +10,11 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * Created by zhaopeng on 2016/11/17.
  */
 public class ProviderBootStrap {
 
-    // 用来存放对应的service 实现
-    private Map<String, Object> handlerMap = new ConcurrentHashMap<String, Object>();
 
     private  static final int port=8080;
 
@@ -42,8 +37,8 @@ public class ProviderBootStrap {
             f.channel().closeFuture().sync();
         } finally {
             // 优雅退出，释放线程池资源
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
+          //  bossGroup.shutdownGracefully();
+          //  workerGroup.shutdownGracefully();
         }
     }
 }

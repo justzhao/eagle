@@ -8,6 +8,8 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 public class CommonNamespaceHandler extends NamespaceHandlerSupport {
 
     public void init() {
+        registerBeanDefinitionParser("application",new EagleApplicationBeanParser());
         registerBeanDefinitionParser("service", new EagleServiceBeanParser());
+
     }
 }
