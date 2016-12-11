@@ -9,6 +9,8 @@
 
     <bean id="storeService" class="com.zhaopeng.demo.provider.StoreServiceImpl"></bean>
 
+   <eagle:registry address="127.0.0.1:2181"></eagle:registry>
+
     <eagle:application port="8080" protocol="netty"></eagle:application>
 
     <eagle:service interfaceName="com.zhaopeng.demo.api.StoreService" ref="storeService"></eagle:service>

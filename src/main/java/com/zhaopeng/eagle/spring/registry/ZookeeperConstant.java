@@ -1,4 +1,4 @@
-package com.zhaopeng.eagle.registry;
+package com.zhaopeng.eagle.spring.registry;
 
 /**
  * Created by zhaopeng on 2016/12/10.

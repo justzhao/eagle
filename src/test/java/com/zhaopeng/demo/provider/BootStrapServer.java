@@ -1,6 +1,7 @@
 package com.zhaopeng.demo.provider;
 
 import com.zhaopeng.eagle.spring.EagleApplicationBean;
+import com.zhaopeng.eagle.spring.RegistryConfig;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -14,6 +15,8 @@ public class BootStrapServer {
         context.start();
         EagleApplicationBean eagleApplicationBean=(EagleApplicationBean) context.getBean("eagle");
         System.out.println(eagleApplicationBean.getPort() +" : "+eagleApplicationBean.getProtocol());
+         RegistryConfig registryConfig=(RegistryConfig)context.getBean("registry");
+        System.out.println(registryConfig.getAddress());
 
         System.in.read();
     }

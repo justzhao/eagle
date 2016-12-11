@@ -1,4 +1,4 @@
-package com.zhaopeng.eagle.registry;
+package com.zhaopeng.eagle.spring.registry;
 
 import org.apache.zookeeper.*;
 
@@ -37,6 +37,7 @@ public class ServiceRegistry {
 
                 }
             });
+            createRoot();
         } catch (IOException e) {
             e.printStackTrace();
         }

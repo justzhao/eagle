@@ -34,7 +34,7 @@ public class ProviderBootStrap {
             ChannelFuture f = b.bind(port).sync();
 
             // 等待服务端监听端口关闭
-            f.channel().closeFuture().sync();
+          //  f.channel().closeFuture().sync();
         } finally {
             // 优雅退出，释放线程池资源
           //  bossGroup.shutdownGracefully();

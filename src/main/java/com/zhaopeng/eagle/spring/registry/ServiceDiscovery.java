@@ -1,4 +1,4 @@
-package com.zhaopeng.eagle.registry;
+package com.zhaopeng.eagle.spring.registry;
 
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
