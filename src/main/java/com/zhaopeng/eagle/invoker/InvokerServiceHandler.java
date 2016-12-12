@@ -2,7 +2,6 @@ package com.zhaopeng.eagle.invoker;
 
 import com.zhaopeng.eagle.entity.RPCFuture;
 import com.zhaopeng.eagle.entity.Request;
-
 import com.zhaopeng.eagle.entity.Response;
 import io.netty.channel.*;
 
@@ -20,17 +19,13 @@ public class InvokerServiceHandler extends SimpleChannelInboundHandler<Response>
 
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Response response) throws Exception {
-
+    protected void channelRead0(final ChannelHandlerContext ctx, Response response) throws Exception {
         System.out.println("invoker  read !");
-
         RPCFuture future = rpcFutureConcurrentHashMap.get(response.getRequestId());
         if (future != null) {
             future.setResponse(response);
             rpcFutureConcurrentHashMap.remove(response.getRequestId());
-
         } else {
-
             System.out.println(" not response !");
         }
 
@@ -39,13 +34,13 @@ public class InvokerServiceHandler extends SimpleChannelInboundHandler<Response>
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         channel = ctx.channel();
-        System.out.println("Client active ");
+
         super.channelActive(ctx);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("Client close ");
+
         super.channelInactive(ctx);
     }
 

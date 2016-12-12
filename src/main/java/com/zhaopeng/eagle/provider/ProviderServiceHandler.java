@@ -2,7 +2,9 @@ package com.zhaopeng.eagle.provider;
 
 import com.zhaopeng.eagle.entity.Request;
 import com.zhaopeng.eagle.entity.Response;
+import com.zhaopeng.eagle.provider.config.ServiceFactory;
 import com.zhaopeng.eagle.util.AsyncTaskSubmitUtil;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.sf.cglib.reflect.FastClass;
@@ -23,7 +25,7 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
         AsyncTaskSubmitUtil.submit(new Runnable() {
             @Override
             public void run() {
-                Response response=new Response();
+                Response response = new Response();
                 response.setRequestId(request.getRequestId());
                 try {
                     response.setResult(handle(request));
@@ -31,8 +33,18 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
                 } catch (Throwable throwable) {
                     response.setError("出错了");
                     throwable.printStackTrace();
-                }finally {
-                    ctx.writeAndFlush(response);
+                } finally {
+                    final ChannelFuture f = ctx.writeAndFlush(response);
+              /*      f.addListener(new GenericFutureListener<Future<? super Void>>() {
+                        @Override
+                        public void operationComplete(Future<? super Void> future) throws Exception {
+                            if(future.isSuccess()){
+                                ctx.close();
+                            }
+
+                        }
+                    });*/
+
                 }
 
             }
@@ -42,7 +54,7 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         ctx.flush();
-       // ctx.close();
+        // ctx.close();
     }
 
     @Override
@@ -61,12 +73,15 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
     }
 
     private Object handle(Request request) throws Throwable {
-        String className = request.getClassName()+"Impl";
+        String className = request.getClassName();
         // 暂时写死
-        Class cls = Class.forName("com.zhaopeng.demo.provider.StoreServiceImpl");
-        Object serviceBean = cls.newInstance();
+/*        Class cls = Class.forName("com.zhaopeng.demo.provider.StoreServiceImpl");
+        Object serviceBean = cls.newInstance();*/
+
+        Object serviceBean = ServiceFactory.getInstance().getHandlerMap().get(className);
 
         Class<?> serviceClass = serviceBean.getClass();
+
         String methodName = request.getMethodName();
         Class<?>[] parameterTypes = request.getParameterTypes();
         Object[] parameters = request.getParameters();

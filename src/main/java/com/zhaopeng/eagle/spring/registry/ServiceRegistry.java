@@ -18,7 +18,7 @@ public class ServiceRegistry {
         initZookeeper();
     }
 
-    private void registryService(String service) {
+    public void registryService(String service) {
 
         if (service == null) return;
         createRoot();

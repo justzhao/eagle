@@ -23,11 +23,11 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
 
         // 执行方法 代理, 使用netty发送 请求
 
-        InvokerConfig invokerConfig =new InvokerConfig();
+        InvokerConfig invokerConfig = new InvokerConfig();
         invokerConfig.connect();
 
-        InvokerServiceHandler hanlder=invokerConfig.chooseHandler();
-        Request request=new Request();
+        InvokerServiceHandler hanlder = invokerConfig.chooseHandler();
+        Request request = new Request();
         request.setRequestId(UUID.randomUUID().toString());
         request.setClassName(interfaceClass.getName());
         request.setMethodName(method.getName());
@@ -35,14 +35,12 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
         request.setParameterTypes(method.getParameterTypes());
 
 
-         RPCFuture future= hanlder.sendRequest(request);
+        RPCFuture future = hanlder.sendRequest(request);
 
         return future.get();
 
 
     }
-
-
 
 
 }

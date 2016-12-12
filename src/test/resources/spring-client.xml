@@ -6,5 +6,5 @@
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
     http://www.newlandframework.com/nettyrpc http://www.zhaoljhpeng.cn/schema/eagle/eagle.xsd">
 
-    <
+
 </beans>
