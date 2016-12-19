@@ -15,14 +15,21 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
 
     Class<T> interfaceClass;
 
+    String url;
+
     public InvocationServiceProxy(Class<T> interfaceClass) {
         this.interfaceClass = interfaceClass;
+    }
+
+    public InvocationServiceProxy(Class<T> interfaceClass,String url) {
+        this.interfaceClass = interfaceClass;
+        this.url=url;
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
         // 执行方法 代理, 使用netty发送 请求
-
+        // 这里需要使用zk获取到provider的服务地址，获取到host和port
         InvokerConfig invokerConfig = new InvokerConfig();
         invokerConfig.connect();
 

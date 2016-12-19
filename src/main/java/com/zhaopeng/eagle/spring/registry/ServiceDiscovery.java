@@ -69,7 +69,7 @@ public class ServiceDiscovery {
 
                 }
             });
-
+               //节点名字是接口名字，节点value是 ip地址
             for (String node : nodeList) {
                 byte[] bytes = zookeeper.getData(ZookeeperConstant.ROOT_PATH + "/" + node, false, null);
                 serviceList.add(new String(bytes));
@@ -79,6 +79,20 @@ public class ServiceDiscovery {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+    }
+
+    public  String getNodeValue(String node){
+        try {
+            byte[] bytes=zookeeper.getData(ZookeeperConstant.ROOT_PATH+"/"+node,false,null);
+            return new String(bytes);
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return null;
 
     }
 

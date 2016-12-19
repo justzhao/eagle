@@ -1,5 +1,6 @@
 package com.zhaopeng.eagle.spring;
 
+import com.zhaopeng.eagle.spring.registry.EagleReferenceBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -38,6 +39,16 @@ public class EagleBeanDefinitionParser implements BeanDefinitionParser {
             beanDefinition.setScope(BeanDefinition.SCOPE_SINGLETON);
             beanDefinition.getPropertyValues().add("address",address);
             parserContext.getRegistry().registerBeanDefinition("registry", beanDefinition);
+        }else if(EagleReferenceBean.class.equals(beanClass)){
+
+            beanDefinition.setInitMethodName("init");
+            String interfaceName = element.getAttribute("interfaceName");
+            String id=element.getAttribute("id");
+            beanDefinition.getPropertyValues().add("interfaceName",interfaceName);
+            parserContext.getRegistry().registerBeanDefinition(id, beanDefinition);
+
+
+
         }
 
 

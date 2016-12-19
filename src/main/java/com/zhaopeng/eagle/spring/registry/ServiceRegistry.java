@@ -19,12 +19,9 @@ public class ServiceRegistry {
     }
 
     public void registryService(String service) {
-
         if (service == null) return;
         createRoot();
         addServiceNode(service);
-
-
     }
 
 
@@ -44,7 +41,6 @@ public class ServiceRegistry {
     }
 
     public void createRoot() {
-
         try {
             if (zookeeper.exists(ZookeeperConstant.ROOT_PATH, false) == null) {
                 zookeeper.create(ZookeeperConstant.ROOT_PATH, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
@@ -61,6 +57,17 @@ public class ServiceRegistry {
         byte[] bytes = service.getBytes();
         try {
             zookeeper.create(ZookeeperConstant.NODE_PATH, bytes, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    public  void  addNode(String node,String value){
+        createRoot();
+        byte[] bytes=value.getBytes();
+        try {
+            zookeeper.create(ZookeeperConstant.NODE_PATH+"/"+node, bytes, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
         } catch (KeeperException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

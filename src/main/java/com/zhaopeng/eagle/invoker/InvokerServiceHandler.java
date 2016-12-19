@@ -34,7 +34,6 @@ public class InvokerServiceHandler extends SimpleChannelInboundHandler<Response>
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         channel = ctx.channel();
-
         super.channelActive(ctx);
     }
 

@@ -77,7 +77,7 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
         // 暂时写死
 /*        Class cls = Class.forName("com.zhaopeng.demo.provider.StoreServiceImpl");
         Object serviceBean = cls.newInstance();*/
-
+        //
         Object serviceBean = ServiceFactory.getInstance().getHandlerMap().get(className);
 
         Class<?> serviceClass = serviceBean.getClass();

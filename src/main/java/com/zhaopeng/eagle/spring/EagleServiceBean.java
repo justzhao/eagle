@@ -54,7 +54,7 @@ public class EagleServiceBean implements ApplicationContextAware, InitializingBe
         RegistryConfig registryConfig = (RegistryConfig) applicationContext.getBean("registry");
         //注册服务
         ServiceRegistry serviceRegistry= registryConfig.getServiceRegistry();
-        serviceRegistry.registryService(interfaceName);
+        serviceRegistry.addNode(interfaceName,"127.0.0.1");
 
     }
 }

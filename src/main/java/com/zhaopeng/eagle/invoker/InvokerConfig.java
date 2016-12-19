@@ -31,6 +31,10 @@ public class InvokerConfig {
 
     private AtomicInteger auto = new AtomicInteger(0);
 
+    public InvokerConfig() {
+        // 调用服务发现获取服务地址。
+    }
+
     Channel channel;
     private CopyOnWriteArrayList<InvokerServiceHandler> connectedHandlers = new CopyOnWriteArrayList<>();
 
