@@ -67,7 +67,7 @@ public class ServiceRegistry {
         createRoot();
         byte[] bytes=value.getBytes();
         try {
-            zookeeper.create(ZookeeperConstant.NODE_PATH+"/"+node, bytes, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+            zookeeper.create(ZookeeperConstant.ROOT_PATH+"/"+node, bytes, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
         } catch (KeeperException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

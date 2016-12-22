@@ -1,8 +1,7 @@
 package com.zhaopeng.demo.consumer;
 
 import com.zhaopeng.demo.api.StoreService;
-import com.zhaopeng.eagle.invoker.ProxyServiceFactory;
-
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 /**
@@ -12,8 +11,12 @@ public class Invocation {
 
     public  static  void  main(String args[]) throws IllegalAccessException {
 
-        StoreService storeService= ProxyServiceFactory.newServiceInstance(StoreService.class);
+        ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext("spring-client.xml");
+        StoreService storeService= (StoreService) context.getBean("storeService");
         System.out.println(storeService.getAllStore("我是参数")+"返回");
+
+     /*   StoreService storeService= ProxyServiceFactory.newServiceInstance(StoreService.class);
+        System.out.println(storeService.getAllStore("我是参数")+"返回");*/
 
     }
 }

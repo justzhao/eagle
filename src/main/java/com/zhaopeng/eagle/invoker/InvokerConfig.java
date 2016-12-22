@@ -26,13 +26,17 @@ public class InvokerConfig {
     protected long connectTimeoutMillis = 6000;
     private ReentrantLock lock = new ReentrantLock();
     private Condition connected = lock.newCondition();
-    static String host = "127.0.0.1";
-    static int port = 8080;
+    private String host = "127.0.0.1";
+    private int port = 8080;
 
     private AtomicInteger auto = new AtomicInteger(0);
 
     public InvokerConfig() {
         // 调用服务发现获取服务地址。
+    }
+    public InvokerConfig(String url) {
+        // 调用服务发现获取服务地址。
+        this.host=url;
     }
 
     Channel channel;

@@ -6,7 +6,7 @@
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.zhaoljhpeng.cn/schema/eagle
        http://www.zhaoljhpeng.cn/schema/eagle/eagle.xsd">
-
-    <eagle:reference id="userService" interface="com.api.service.UserService"></eagle:reference>
+    <eagle:registry address="127.0.0.1:2181"></eagle:registry>
+    <eagle:reference id="storeService" interface="com.zhaopeng.demo.api.StoreService"></eagle:reference>
 
 </beans>

@@ -42,7 +42,7 @@ public class EagleBeanDefinitionParser implements BeanDefinitionParser {
         }else if(EagleReferenceBean.class.equals(beanClass)){
 
             beanDefinition.setInitMethodName("init");
-            String interfaceName = element.getAttribute("interfaceName");
+            String interfaceName = element.getAttribute("interface");
             String id=element.getAttribute("id");
             beanDefinition.getPropertyValues().add("interfaceName",interfaceName);
             parserContext.getRegistry().registerBeanDefinition(id, beanDefinition);

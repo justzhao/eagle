@@ -30,7 +30,7 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
 
         // 执行方法 代理, 使用netty发送 请求
         // 这里需要使用zk获取到provider的服务地址，获取到host和port
-        InvokerConfig invokerConfig = new InvokerConfig();
+        InvokerConfig invokerConfig = new InvokerConfig(url);
         invokerConfig.connect();
 
         InvokerServiceHandler hanlder = invokerConfig.chooseHandler();
