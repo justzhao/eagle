@@ -7,7 +7,7 @@
        http://www.zhaoljhpeng.cn/schema/eagle
        http://www.zhaoljhpeng.cn/schema/eagle/eagle.xsd">
 
-    <bean id="storeService" class="com.zhaopeng.demo.provider.StoreServiceImpl"></bean>
+    <bean id="storeService"  class="com.zhaopeng.demo.provider.StoreServiceImpl" scope="prototype"></bean>
 
     <eagle:registry address="127.0.0.1:2181"></eagle:registry>
 
