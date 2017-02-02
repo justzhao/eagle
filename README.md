@@ -1,4 +1,8 @@
-"study rpc and netty"
+#  学习 rpc and netty 的项目
+
+### 新增和spring 结合实现远程调用，自定义标签
+
+### 新增zookeeper 实现服务发现
 
 invoker 包应该是返回动态代理对象
 
