@@ -5,7 +5,7 @@ package com.zhaopeng.eagle.spring.registry;
  */
 public interface ZookeeperConstant {
 
-    public int TIME_OUT=1000;
+    public int TIME_OUT=5000;
 
     public String ROOT_PATH="/eagle";
 

@@ -34,25 +34,17 @@ public class EagleBeanDefinitionParser implements BeanDefinitionParser {
         beanDefinition.setLazyInit(false);
         if(RegistryConfig.class.equals(beanClass)){
             String address=element.getAttribute("address");
-
             beanDefinition.setInitMethodName("init");
             beanDefinition.setScope(BeanDefinition.SCOPE_SINGLETON);
             beanDefinition.getPropertyValues().add("address",address);
             parserContext.getRegistry().registerBeanDefinition("registry", beanDefinition);
         }else if(EagleReferenceBean.class.equals(beanClass)){
-
             beanDefinition.setInitMethodName("init");
             String interfaceName = element.getAttribute("interface");
             String id=element.getAttribute("id");
             beanDefinition.getPropertyValues().add("interfaceName",interfaceName);
             parserContext.getRegistry().registerBeanDefinition(id, beanDefinition);
-
-
-
         }
-
-
-
         return beanDefinition;
     }
 }

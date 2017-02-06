@@ -37,8 +37,8 @@ public class ProviderBootStrap {
           //  f.channel().closeFuture().sync();
         } finally {
             // 优雅退出，释放线程池资源
-          //  bossGroup.shutdownGracefully();
-          //  workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
+           workerGroup.shutdownGracefully();
         }
     }
 }

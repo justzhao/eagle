@@ -17,7 +17,7 @@ public class ServiceFactory {
         return ServiceFactoryHolder.instance;
     }
 
-    public   void serverStart()
+    public void serverStart()
     {
         try {
             ProviderBootStrap.init();
