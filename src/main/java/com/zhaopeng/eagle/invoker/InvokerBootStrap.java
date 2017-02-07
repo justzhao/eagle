@@ -18,13 +18,12 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Created by zhaopeng on 2016/10/30.
  */
-public class InvokerConfig {
+public class InvokerBootStrap {
 
     public static void main(String args[]) {
-        InvokerConfig invokerConfig = new InvokerConfig();
-
+        InvokerBootStrap invokerBootStrap = new InvokerBootStrap();
         try {
-            invokerConfig.connect();
+            invokerBootStrap.connect();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,11 +40,11 @@ public class InvokerConfig {
 
     private AtomicInteger auto = new AtomicInteger(0);
 
-    public InvokerConfig() {
+    public InvokerBootStrap() {
         // 调用服务发现获取服务地址。
     }
 
-    public InvokerConfig(String url) {
+    public InvokerBootStrap(String url) {
         // 调用服务发现获取服务地址。
         this.host = url;
     }
@@ -65,7 +64,7 @@ public class InvokerConfig {
                 try {
                     Bootstrap b = new Bootstrap();
 
-                    b.group(eventLoopGroup).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, true).handler(new RpcInvokerInitializer());
+                    b.group(eventLoopGroup).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, true).handler(new InvokerInitializerChannel());
                     // 发起异步连接操作
 
                     ChannelFuture channelFuture = b.connect(host, port).sync();

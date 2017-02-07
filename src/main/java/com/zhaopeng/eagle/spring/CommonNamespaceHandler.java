@@ -1,6 +1,6 @@
 package com.zhaopeng.eagle.spring;
 
-import com.zhaopeng.eagle.spring.registry.EagleReferenceBean;
+import com.zhaopeng.eagle.registry.config.RegistryConfig;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**

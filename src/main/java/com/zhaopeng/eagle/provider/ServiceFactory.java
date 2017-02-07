@@ -1,4 +1,4 @@
-package com.zhaopeng.eagle.provider.config;
+package com.zhaopeng.eagle.provider;
 
 import java.util.concurrent.ConcurrentHashMap;
 

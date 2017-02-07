@@ -1,6 +1,6 @@
 package com.zhaopeng.eagle.entity;
 
-import com.zhaopeng.eagle.invoker.InvokerConfig;
+import com.zhaopeng.eagle.invoker.InvokerBootStrap;
 import com.zhaopeng.eagle.invoker.InvokerServiceHandler;
 
 
@@ -30,11 +30,11 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
 
         // 执行方法 代理, 使用netty发送 请求
         // 这里需要使用zk获取到provider的服务地址，获取到host和port
-        InvokerConfig invokerConfig = new InvokerConfig(url);
-        invokerConfig.connect();
+        InvokerBootStrap invokerBootStrap = new InvokerBootStrap(url);
+        invokerBootStrap.connect();
         System.out.println("netty 启动");
 
-        InvokerServiceHandler hanlder = invokerConfig.chooseHandler();
+        InvokerServiceHandler hanlder = invokerBootStrap.chooseHandler();
         Request request = new Request();
         request.setRequestId(UUID.randomUUID().toString());
         request.setClassName(interfaceClass.getName());

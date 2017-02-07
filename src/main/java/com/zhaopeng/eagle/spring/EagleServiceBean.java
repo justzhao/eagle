@@ -1,7 +1,8 @@
 package com.zhaopeng.eagle.spring;
 
-import com.zhaopeng.eagle.provider.config.ServiceFactory;
-import com.zhaopeng.eagle.spring.registry.ServiceRegistry;
+import com.zhaopeng.eagle.provider.ServiceFactory;
+import com.zhaopeng.eagle.registry.ServiceRegistry;
+import com.zhaopeng.eagle.registry.config.RegistryConfig;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;

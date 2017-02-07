@@ -1,7 +1,7 @@
 package com.zhaopeng.demo.provider;
 
 import com.zhaopeng.eagle.spring.EagleApplicationBean;
-import com.zhaopeng.eagle.spring.RegistryConfig;
+import com.zhaopeng.eagle.registry.config.RegistryConfig;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**

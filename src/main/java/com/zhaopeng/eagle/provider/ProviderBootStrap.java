@@ -1,6 +1,6 @@
-package com.zhaopeng.eagle.provider.config;
+package com.zhaopeng.eagle.provider;
 
-import com.zhaopeng.eagle.provider.RpcProvideInitializer;
+import com.zhaopeng.eagle.provider.ProvideInitializerChannel;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -28,7 +28,7 @@ public class ProviderBootStrap {
                     .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG, 100)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new RpcProvideInitializer());
+                    .childHandler(new ProvideInitializerChannel());
 
             // 绑定端口，同步等待成功
             ChannelFuture f = b.bind(port).sync();

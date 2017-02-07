@@ -2,7 +2,6 @@ package com.zhaopeng.eagle.provider;
 
 import com.zhaopeng.eagle.entity.Request;
 import com.zhaopeng.eagle.entity.Response;
-import com.zhaopeng.eagle.provider.config.ServiceFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.sf.cglib.reflect.FastClass;
@@ -23,8 +22,6 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
 
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, final Request request) throws Exception {
-
-
         executor=(ExecutorService)ServiceFactory.getInstance().getHandlerMap().get("executor");
         executor.submit(new Runnable() {
             @Override
@@ -33,14 +30,12 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
                 response.setRequestId(request.getRequestId());
                 try {
                     response.setResult(handle(request));
-
                 } catch (Throwable throwable) {
                     response.setError("出错了");
                     throwable.printStackTrace();
                 } finally {
                     ctx.writeAndFlush(response);
                 }
-
             }
         });
     }

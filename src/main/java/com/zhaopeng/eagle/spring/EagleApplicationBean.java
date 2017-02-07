@@ -1,6 +1,6 @@
 package com.zhaopeng.eagle.spring;
 
-import com.zhaopeng.eagle.provider.config.ServiceFactory;
+import com.zhaopeng.eagle.provider.ServiceFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.util.concurrent.*;

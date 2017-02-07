@@ -1,5 +1,6 @@
-package com.zhaopeng.eagle.spring.registry;
+package com.zhaopeng.eagle.registry;
 
+import com.zhaopeng.eagle.registry.config.ZookeeperConstant;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;

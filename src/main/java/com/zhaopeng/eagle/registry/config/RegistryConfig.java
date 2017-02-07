@@ -1,7 +1,7 @@
-package com.zhaopeng.eagle.spring;
+package com.zhaopeng.eagle.registry.config;
 
-import com.zhaopeng.eagle.spring.registry.ServiceDiscovery;
-import com.zhaopeng.eagle.spring.registry.ServiceRegistry;
+import com.zhaopeng.eagle.registry.ServiceDiscovery;
+import com.zhaopeng.eagle.registry.ServiceRegistry;
 
 /**
  * Created by zhaopeng on 2016/12/11.
