@@ -27,6 +27,7 @@ public class ServiceDiscovery {
     }
 
     public void initZookeeper() {
+
         try {
             this.zookeeper = new ZooKeeper(address, ZookeeperConstant.TIME_OUT, new Watcher() {
                 @Override
@@ -70,10 +71,12 @@ public class ServiceDiscovery {
                 }
             });
                //节点名字是接口名字，节点value是 ip地址
+
             for (String node : nodeList) {
                 byte[] bytes = zookeeper.getData(ZookeeperConstant.ROOT_PATH + "/" + node, false, null);
                 serviceList.add(new String(bytes));
             }
+
         } catch (KeeperException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -83,8 +86,10 @@ public class ServiceDiscovery {
     }
 
     public  String getNodeValue(String node){
+
         try {
             byte[] bytes=zookeeper.getData(ZookeeperConstant.ROOT_PATH+"/"+node,false,null);
+
             return new String(bytes);
         } catch (KeeperException e) {
             e.printStackTrace();

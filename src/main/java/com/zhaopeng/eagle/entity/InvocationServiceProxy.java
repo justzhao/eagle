@@ -32,6 +32,7 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
         // 这里需要使用zk获取到provider的服务地址，获取到host和port
         InvokerConfig invokerConfig = new InvokerConfig(url);
         invokerConfig.connect();
+        System.out.println("netty 启动");
 
         InvokerServiceHandler hanlder = invokerConfig.chooseHandler();
         Request request = new Request();
@@ -43,7 +44,7 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
 
 
         RPCFuture future = hanlder.sendRequest(request);
-
+        System.out.println(future.get());
         return future.get();
 
 

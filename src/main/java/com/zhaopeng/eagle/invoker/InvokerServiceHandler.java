@@ -17,14 +17,18 @@ public class InvokerServiceHandler extends SimpleChannelInboundHandler<Response>
 
     private volatile Channel channel;
 
+    public InvokerServiceHandler(){
+        super();
+    }
+
 
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, Response response) throws Exception {
-        System.out.println("invoker  read !");
         RPCFuture future = rpcFutureConcurrentHashMap.get(response.getRequestId());
         if (future != null) {
             future.setResponse(response);
             rpcFutureConcurrentHashMap.remove(response.getRequestId());
+            ctx.close();
         } else {
             System.out.println(" not response !");
         }
@@ -33,6 +37,7 @@ public class InvokerServiceHandler extends SimpleChannelInboundHandler<Response>
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+
         channel = ctx.channel();
         super.channelActive(ctx);
     }
@@ -53,11 +58,7 @@ public class InvokerServiceHandler extends SimpleChannelInboundHandler<Response>
         future.addListener(new ChannelFutureListener() {
             public void operationComplete(final ChannelFuture channelFuture) throws Exception {
                 if (channelFuture.isSuccess()) {
-
-                    System.out.println(" Successfully send Message !");
-
-                } else {
-                    System.out.println("unSuccessfully send message ");
+                    System.out.println(" 成功调用 !");
                 }
             }
         });

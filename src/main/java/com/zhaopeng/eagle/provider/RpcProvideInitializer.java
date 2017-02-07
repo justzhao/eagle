@@ -20,8 +20,6 @@ public class RpcProvideInitializer extends ChannelInitializer<SocketChannel> {
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
 
-        //ByteBuf delimiter = Unpooled.copiedBuffer("$_".getBytes());
-
         pipeline.addLast( new LengthFieldBasedFrameDecoder(65536,0,4,0,0));
 
         pipeline.addLast(new Decoder(Request.class));

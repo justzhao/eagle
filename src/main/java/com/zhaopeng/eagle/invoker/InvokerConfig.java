@@ -20,6 +20,16 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class InvokerConfig {
 
+    public static void main(String args[]) {
+        InvokerConfig invokerConfig = new InvokerConfig();
+
+        try {
+            invokerConfig.connect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(16, 16, 600L, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(65536));
 
     EventLoopGroup eventLoopGroup = new NioEventLoopGroup(4);
@@ -34,39 +44,41 @@ public class InvokerConfig {
     public InvokerConfig() {
         // 调用服务发现获取服务地址。
     }
+
     public InvokerConfig(String url) {
         // 调用服务发现获取服务地址。
-        this.host=url;
+        this.host = url;
     }
 
     Channel channel;
     private CopyOnWriteArrayList<InvokerServiceHandler> connectedHandlers = new CopyOnWriteArrayList<>();
 
 
-    public  void connect() throws Exception {
+    public void connect() throws Exception {
 
 
         threadPoolExecutor.submit(new Runnable() {
             @Override
             public void run() {
 
+
                 try {
                     Bootstrap b = new Bootstrap();
 
                     b.group(eventLoopGroup).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, true).handler(new RpcInvokerInitializer());
                     // 发起异步连接操作
-                    ChannelFuture channelFuture = b.connect(host, port).sync();
-                   channelFuture.addListener(new ChannelFutureListener() {
 
+                    ChannelFuture channelFuture = b.connect(host, port).sync();
+
+                    channelFuture.addListener(new ChannelFutureListener() {
                         public void operationComplete(final ChannelFuture channelFuture) throws Exception {
                             if (channelFuture.isSuccess()) {
-                                System.out.println("Successfully connect to remote server. remote peer = " );
                                 InvokerServiceHandler handler = channelFuture.channel().pipeline().get(InvokerServiceHandler.class);
                                 addHandler(handler);
                             }
                         }
                     });
-                   channelFuture.channel().closeFuture().sync();
+                    channelFuture.channel().closeFuture().sync();
 
                     System.out.println("over");
 
@@ -74,12 +86,10 @@ public class InvokerConfig {
                     e.printStackTrace();
                 } finally {
                     // 优雅退出，释放NIO线程组
-                    eventLoopGroup.shutdownGracefully();
+                    //    eventLoopGroup.shutdownGracefully();
                 }
             }
         });
-
-
     }
 
     private void addHandler(InvokerServiceHandler handler) {
@@ -90,7 +100,7 @@ public class InvokerConfig {
     public InvokerServiceHandler chooseHandler() throws InterruptedException {
         CopyOnWriteArrayList<InvokerServiceHandler> handlers = (CopyOnWriteArrayList<InvokerServiceHandler>) this.connectedHandlers.clone();
         int size = handlers.size();
-        while (  size <= 0) {
+        while (size <= 0) {
             try {
                 boolean available = waitingForHandler();
                 if (available) {
