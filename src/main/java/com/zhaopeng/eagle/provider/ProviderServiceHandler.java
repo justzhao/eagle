@@ -6,6 +6,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.concurrent.ExecutorService;
@@ -14,7 +16,10 @@ import java.util.concurrent.ExecutorService;
 /**
  * Created by zhaopeng on 2016/10/29.
  */
-public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>{
+public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request> {
+
+    private final static Logger logger = LoggerFactory.getLogger(ProviderServiceHandler.class);
+    //protected final Logger =LOGG
 
     private ApplicationContext springContext;
 
@@ -22,7 +27,7 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
 
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, final Request request) throws Exception {
-        executor=(ExecutorService)ServiceFactory.getInstance().getHandlerMap().get("executor");
+        executor = (ExecutorService) ServiceFactory.getInstance().getHandlerMap().get("executor");
         executor.submit(new Runnable() {
             @Override
             public void run() {
@@ -47,7 +52,19 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
     }
 
     @Override
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        // 从map的中取出Channel的个数，大于配置值就报错。
+
+        logger.info("register1 11 ");
+
+        System.out.println("register ");
+        super.channelRegistered(ctx);
+    }
+
+    @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+
+        // 把Channel 保存到一个map中。
         System.out.println("RamoteAddress : " + ctx.channel().remoteAddress() + " active !");
         super.channelActive(ctx);
     }
@@ -57,6 +74,7 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
         cause.printStackTrace();
         ctx.close();// 发生异常，关闭链路
     }
+
 
     private Object handle(Request request) throws Throwable {
         String className = request.getClassName();
@@ -91,5 +109,10 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
 
     public void setExecutor(ExecutorService executor) {
         this.executor = executor;
+    }
+
+
+    public static void main(String args[]){
+        logger.debug("12313123");
     }
 }
