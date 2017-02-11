@@ -24,7 +24,8 @@ public class EagleApplicationBean implements DisposableBean {
     public void init() {
         executor = new ThreadPoolExecutor(threads, threads, 600l, TimeUnit.SECONDS,
                 new ArrayBlockingQueue<Runnable>(65536));
-        ServiceFactory.getInstance().getHandlerMap().put("executor",executor);
+        ServiceFactory.getInstance().getSetsMap().put("executor",executor);
+        ServiceFactory.getInstance().getSetsMap().put("accepts",accepts);
         ServiceFactory instance = ServiceFactory.getInstance();
         instance.serverStart();
     }

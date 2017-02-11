@@ -12,6 +12,7 @@ import net.sf.cglib.reflect.FastMethod;
 import org.springframework.context.ApplicationContext;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -19,16 +20,17 @@ import java.util.concurrent.ExecutorService;
  */
 public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request> {
 
-   private final static Logger logger = LoggerFactory.getLogger(ProviderServiceHandler.class);
-    //protected final Logger =LOGG
+    private final static Logger logger = LoggerFactory.getLogger(ProviderServiceHandler.class);
 
     private ApplicationContext springContext;
 
     private ExecutorService executor;
 
+    private AtomicInteger accepts = new AtomicInteger();
+
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, final Request request) throws Exception {
-        executor = (ExecutorService) ServiceFactory.getInstance().getHandlerMap().get("executor");
+        executor = (ExecutorService) ServiceFactory.getInstance().getSetsMap().get("executor");
         executor.submit(new Runnable() {
             @Override
             public void run() {
@@ -52,23 +54,71 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
         // ctx.close();
     }
 
+    /**
+     * 当创建Channel注册带eventLoop 中调用
+     *
+     * @param ctx
+     * @throws Exception
+     */
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         // 从map的中取出Channel的个数，大于配置值就报错。
+        int accepts = (int) ServiceFactory.getInstance().getSetsMap().get("accepts");
 
-        logger.info("register1 11 ");
+        if (this.accepts.get() > accepts) {
 
-        System.out.println("register ");
+            logger.error("channels 的个数超过配置");
+            throw new Exception("Channels 太多了");
+            //return;
+        }
+        this.accepts.getAndIncrement();
+        logger.info("register accepts is " + this.accepts.get() + " and sets accepts is " + accepts);
         super.channelRegistered(ctx);
     }
 
+    /**
+     * Channel处于激活状态
+     *
+     * @param ctx
+     * @throws Exception
+     */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
         // 把Channel 保存到一个map中。
-        System.out.println("RamoteAddress : " + ctx.channel().remoteAddress() + " active !");
+        System.out.println("RamoteAddress : " + ctx.channel().remoteAddress() + " active !" + ctx.channel().toString());
         super.channelActive(ctx);
     }
+
+
+    /**
+     * 当Channel非激活状态
+     *
+     * @param ctx
+     * @throws Exception
+     */
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+
+
+        super.channelInactive(ctx);
+    }
+
+
+    /**
+     * 当Channel已经创建但是没有注册到eventloop
+     *
+     * @param ctx
+     * @throws Exception
+     */
+    @Override
+    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+
+        this.accepts.getAndDecrement();
+        logger.info("unregister accepts is " + this.accepts.get());
+        super.channelUnregistered(ctx);
+    }
+
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
@@ -113,7 +163,7 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
     }
 
 
-    public static void main(String args[]){
-        logger.debug("12313123");
+    public static void main(String args[]) {
+        logger.info("12313123");
     }
 }

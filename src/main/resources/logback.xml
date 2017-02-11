@@ -38,7 +38,7 @@
 
 
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="ERROR_FILE_APPENDER" />
         <appender-ref ref="ALL_FILE_APPENDER" />
         <appender-ref ref="CONSOLE" />
