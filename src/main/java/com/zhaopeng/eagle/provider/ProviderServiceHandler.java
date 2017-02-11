@@ -1,13 +1,14 @@
 package com.zhaopeng.eagle.provider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.zhaopeng.eagle.entity.Request;
 import com.zhaopeng.eagle.entity.Response;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.concurrent.ExecutorService;
@@ -18,7 +19,7 @@ import java.util.concurrent.ExecutorService;
  */
 public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request> {
 
-    private final static Logger logger = LoggerFactory.getLogger(ProviderServiceHandler.class);
+   private final static Logger logger = LoggerFactory.getLogger(ProviderServiceHandler.class);
     //protected final Logger =LOGG
 
     private ApplicationContext springContext;
