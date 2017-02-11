@@ -3,4 +3,5 @@
  - 底层是使用Netty框架进行通信，提供protobuf序列化方式
  - spring 结合实现远程调用，通过自定义标签实现无入侵代码
  - 新增zookeeper 实现服务发现
+ - 提供provider 服务端线程个数和连接数配置
 

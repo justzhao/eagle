@@ -8,6 +8,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.net.InetAddress;
+
 /**
  * Created by zhaopeng on 2016/11/17.
  */
@@ -54,9 +56,11 @@ public class EagleServiceBean implements ApplicationContextAware, InitializingBe
     public void afterPropertiesSet() throws Exception {
         RegistryConfig registryConfig = (RegistryConfig) applicationContext.getBean("registry");
         //注册服务
-        ServiceRegistry serviceRegistry= registryConfig.getServiceRegistry();
+        ServiceRegistry serviceRegistry = registryConfig.getServiceRegistry();
 
-        serviceRegistry.addNode(interfaceName,"127.0.0.1");
+        String host = InetAddress.getLocalHost().getHostAddress();
+
+        serviceRegistry.addNode(interfaceName, host);
 
     }
 }
