@@ -54,6 +54,8 @@
                     <xsd:attribute name="callType" type="xsd:string"
                                    default="sync" />
                     <xsd:attribute name="timeout" type="xsd:string" default="5000" />
+
+                    <xsd:attribute name="retries" type="xsd:string" default="3" />
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>

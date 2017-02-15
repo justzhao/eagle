@@ -1,5 +1,7 @@
 package com.zhaopeng.eagle.entity;
 
+import com.zhaopeng.eagle.invoker.config.InvokerConfig;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -48,10 +50,11 @@ public class RPCFuture implements Future<Object> {
     @Override
     public Object get() throws InterruptedException, ExecutionException {
 
+        int timeout=(int) InvokerConfig.getInstance().getSets().get("timeout");
         try {
             lock.lock();
             if (response == null) {
-                condition.await(1000, TimeUnit.MILLISECONDS);
+                condition.await(timeout, TimeUnit.MILLISECONDS);
             }
             return response.getResult();
         } finally {

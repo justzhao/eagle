@@ -1,6 +1,7 @@
 package com.zhaopeng.eagle.spring;
 
 import com.zhaopeng.eagle.invoker.ProxyServiceFactory;
+import com.zhaopeng.eagle.invoker.config.InvokerConfig;
 import com.zhaopeng.eagle.registry.ServiceDiscovery;
 import com.zhaopeng.eagle.registry.config.RegistryConfig;
 import org.springframework.beans.BeansException;
@@ -15,9 +16,9 @@ public class EagleReferenceBean implements FactoryBean , ApplicationContextAware
 
     private String interfaceName;
 
-    private int timeout = 200;
+    private int timeout ;
 
-    private int retries = 1;
+    private int retries ;
 
     private String url;
 
@@ -82,6 +83,9 @@ public class EagleReferenceBean implements FactoryBean , ApplicationContextAware
         this.url=serviceDiscovery.getNodeValue(interfaceName);
         this.objType = Class.forName(this.interfaceName);
         this.obj = ProxyServiceFactory.newServiceInstance(this.objType,url);
+
+        InvokerConfig.getInstance().getSets().put("timeout",this.timeout);
+        InvokerConfig.getInstance().getSets().put("retries",retries);
     }
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
