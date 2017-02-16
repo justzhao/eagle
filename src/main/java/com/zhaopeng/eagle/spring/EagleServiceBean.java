@@ -21,6 +21,12 @@ public class EagleServiceBean implements ApplicationContextAware, InitializingBe
 
     private ApplicationContext applicationContext;
 
+    /**
+     * 服务的注册中心
+     */
+    private ServiceRegistry serviceRegistry;
+
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 
@@ -56,8 +62,8 @@ public class EagleServiceBean implements ApplicationContextAware, InitializingBe
     public void afterPropertiesSet() throws Exception {
         RegistryConfig registryConfig = (RegistryConfig) applicationContext.getBean("registry");
         //注册服务
-        ServiceRegistry serviceRegistry = registryConfig.getServiceRegistry();
-
+        //ServiceRegistry serviceRegistry = registryConfig.getServiceRegistry();
+        serviceRegistry=new ServiceRegistry(registryConfig.getAddress());
         String host = InetAddress.getLocalHost().getHostAddress();
 
         serviceRegistry.addNode(interfaceName, host);

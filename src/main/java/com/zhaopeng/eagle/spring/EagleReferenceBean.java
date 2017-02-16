@@ -12,13 +12,13 @@ import org.springframework.context.ApplicationContextAware;
 /**
  * Created by zhaopeng on 2016/12/19.
  */
-public class EagleReferenceBean implements FactoryBean , ApplicationContextAware {
+public class EagleReferenceBean implements FactoryBean, ApplicationContextAware {
 
     private String interfaceName;
 
-    private int timeout ;
+    private int timeout;
 
-    private int retries ;
+    private int retries;
 
     private String url;
 
@@ -27,46 +27,70 @@ public class EagleReferenceBean implements FactoryBean , ApplicationContextAware
     private Class<?> objType;
 
     private ApplicationContext applicationContext;
+
+    private ServiceDiscovery serviceDiscovery;
+
     public String getInterfaceName() {
         return interfaceName;
     }
+
     public void setInterfaceName(String interfaceName) {
         this.interfaceName = interfaceName;
     }
+
     public int getTimeout() {
         return timeout;
     }
+
     public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
+
     public int getRetries() {
         return retries;
     }
+
     public void setRetries(int retries) {
         this.retries = retries;
     }
+
     public Object getObj() {
         return obj;
     }
+
     public String getUrl() {
         return url;
     }
+
     public void setUrl(String url) {
         this.url = url;
     }
+
     public void setObj(Object obj) {
         this.obj = obj;
     }
+
     public Class<?> getObjType() {
         return objType;
     }
+
     public void setObjType(Class<?> objType) {
         this.objType = objType;
     }
+
+    public ServiceDiscovery getServiceDiscovery() {
+        return serviceDiscovery;
+    }
+
+    public void setServiceDiscovery(ServiceDiscovery serviceDiscovery) {
+        this.serviceDiscovery = serviceDiscovery;
+    }
+
     @Override
     public Object getObject() throws Exception {
         return this.obj;
     }
+
     @Override
     public Class<?> getObjectType() {
         return this.objType;
@@ -79,16 +103,17 @@ public class EagleReferenceBean implements FactoryBean , ApplicationContextAware
 
     public void init() throws Exception {
         RegistryConfig registryConfig = (RegistryConfig) applicationContext.getBean("registry");
-        ServiceDiscovery serviceDiscovery= registryConfig.getServiceDiscovery();
-        this.url=serviceDiscovery.getNodeValue(interfaceName);
+        serviceDiscovery = new ServiceDiscovery(registryConfig.getAddress());
+        this.url = serviceDiscovery.getNodeValue(interfaceName);
         this.objType = Class.forName(this.interfaceName);
-        this.obj = ProxyServiceFactory.newServiceInstance(this.objType,url);
+        this.obj = ProxyServiceFactory.newServiceInstance(this.objType, url);
 
-        InvokerConfig.getInstance().getSets().put("timeout",this.timeout);
-        InvokerConfig.getInstance().getSets().put("retries",retries);
+        InvokerConfig.getInstance().getSets().put("timeout", this.timeout);
+        InvokerConfig.getInstance().getSets().put("retries", retries);
     }
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext=applicationContext;
+        this.applicationContext = applicationContext;
     }
 }
