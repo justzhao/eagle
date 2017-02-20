@@ -54,6 +54,22 @@ public class ServiceRegistry {
 
     }
 
+    /**
+     *  按照路径添加节点
+     * @param path
+     * @param ephemeral
+     */
+    public void create(String path, boolean ephemeral) {
+        int i = path.lastIndexOf('/');
+        if (i > 0) {
+            create(path.substring(0, i), false);
+        }
+        if (ephemeral) {
+          //  createEphemeral(path);
+        } else {
+           // createPersistent(path);
+        }
+    }
     public void addServiceNode(String service) {
         byte[] bytes = service.getBytes();
         try {
