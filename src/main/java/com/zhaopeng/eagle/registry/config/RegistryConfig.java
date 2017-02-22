@@ -5,11 +5,13 @@ package com.zhaopeng.eagle.registry.config;
  */
 public class RegistryConfig {
 
-    private  String address;
+    private String address;
 
 
+    public void init() {
 
-    public void init(){
+        // 应该要实例化zk 客户端
+
 
     }
 

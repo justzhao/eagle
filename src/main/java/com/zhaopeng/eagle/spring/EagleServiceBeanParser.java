@@ -16,9 +16,11 @@ public class EagleServiceBeanParser implements BeanDefinitionParser {
         String ref = element.getAttribute("ref");
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
         beanDefinition.setBeanClass(EagleServiceBean.class);
+        beanDefinition.setInitMethodName("init");
         beanDefinition.setLazyInit(false);
         beanDefinition.getPropertyValues().addPropertyValue("interfaceName", interfaceName);
         beanDefinition.getPropertyValues().addPropertyValue("ref", ref);
+
         parserContext.getRegistry().registerBeanDefinition(interfaceName, beanDefinition);
         return beanDefinition;
     }

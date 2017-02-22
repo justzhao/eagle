@@ -47,7 +47,7 @@ public abstract class AbstractRegistry {
     }
 
     /**
-     * 定于服务
+     * 订阅服务
      * @param url
      */
     public void subscribe(URL url){

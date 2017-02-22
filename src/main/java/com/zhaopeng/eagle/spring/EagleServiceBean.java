@@ -1,7 +1,6 @@
 package com.zhaopeng.eagle.spring;
 
 import com.zhaopeng.eagle.provider.ServiceFactory;
-import com.zhaopeng.eagle.registry.ServiceRegistry;
 import com.zhaopeng.eagle.registry.config.RegistryConfig;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,19 +20,20 @@ public class EagleServiceBean implements ApplicationContextAware, InitializingBe
 
     private ApplicationContext applicationContext;
 
-    /**
-     * 服务的注册中心
-     */
-    private ServiceRegistry serviceRegistry;
 
+    private RegistryConfig registryConfig;
+
+
+    public void init() {
+        registryConfig = (RegistryConfig) applicationContext.getBean("registry");
+
+    }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 
         ServiceFactory.getInstance().getHandlerMap().put(interfaceName, applicationContext.getBean(ref));
         this.applicationContext = applicationContext;
-        // 在这里设置好对应的service方法到 map中
-
 
     }
 
@@ -58,15 +58,22 @@ public class EagleServiceBean implements ApplicationContextAware, InitializingBe
         return applicationContext;
     }
 
+    public RegistryConfig getRegistryConfig() {
+        return registryConfig;
+    }
+
+    public void setRegistryConfig(RegistryConfig registryConfig) {
+        this.registryConfig = registryConfig;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         RegistryConfig registryConfig = (RegistryConfig) applicationContext.getBean("registry");
-        //注册服务
-        //ServiceRegistry serviceRegistry = registryConfig.getServiceRegistry();
-        serviceRegistry=new ServiceRegistry(registryConfig.getAddress());
+
+        // serviceRegistry = new ServiceRegistry(registryConfig.getAddress());
         String host = InetAddress.getLocalHost().getHostAddress();
 
-        serviceRegistry.addNode(interfaceName, host);
+        // serviceRegistry.addNode(interfaceName, host);
 
     }
 }
