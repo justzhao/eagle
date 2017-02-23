@@ -8,7 +8,7 @@ import java.io.File;
  * 服务的注册和发现
  * Created by zhaopeng on 2017/2/21.
  */
-public abstract class AbstractRegistry {
+public abstract class AbstractRegistry implements Registry {
 
     // URL地址分隔符，用于文件缓存中，服务提供者URL分隔
     private static final char URL_SEPARATOR = ' ';
