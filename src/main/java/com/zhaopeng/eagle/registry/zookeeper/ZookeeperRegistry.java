@@ -1,12 +1,12 @@
-package com.zhaopeng.eagle.registry;
+package com.zhaopeng.eagle.registry.zookeeper;
 
 import com.zhaopeng.eagle.entity.URL;
+import com.zhaopeng.eagle.registry.AbstractRegistry;
 import com.zhaopeng.eagle.registry.config.RegistryConfig;
 import com.zhaopeng.eagle.registry.config.ZookeeperConstant;
 import org.apache.zookeeper.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
@@ -20,15 +20,15 @@ public class ZookeeperRegistry extends AbstractRegistry {
     private ZooKeeper zookeeper;
 
 
-    @Autowired
-    private RegistryConfig registryConfig;
-
 
     public ZookeeperRegistry(){
+
+    }
+
+    public ZookeeperRegistry(RegistryConfig registryConfig){
         try {
             this.zookeeper=new ZooKeeper(registryConfig.getAddress(), ZookeeperConstant.TIME_OUT,new ZookeeperWatch());
         } catch (IOException e) {
-
             logger.error("zk 客户端 实例化失败 {}"+e);
             e.printStackTrace();
         }
