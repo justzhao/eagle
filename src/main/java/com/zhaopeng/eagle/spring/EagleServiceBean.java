@@ -125,6 +125,7 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
         //注册，然后缓存实例到map
         ServiceFactory.getInstance().getHandlerMap().put(interfaceName, applicationContext.getBean(ref));
         doRegister();
+
     }
 
     public void doRegister() {
@@ -134,8 +135,12 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
         }
         RegistryFactory factory = new ZookeeperRegistryFactory();
         Registry registry = factory.create(registries.get(0));
-        URL url = new URL();
+        URL url = new URL(protocol,host,port,interfaceName);
         registry.register(url);
+
+    }
+
+    public  void  doExport(){
 
     }
 }
