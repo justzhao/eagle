@@ -1,6 +1,6 @@
 package com.zhaopeng.eagle.provider;
 
-import com.zhaopeng.eagle.provider.ProvideInitializerChannel;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -16,9 +16,9 @@ import io.netty.handler.logging.LoggingHandler;
 public class ProviderBootStrap {
 
 
-    private  static final int port=8080;
 
-    public static void init() throws Exception {
+
+    public static void init(int port) throws Exception {
         // 配置服务端的NIO线程组
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -28,7 +28,7 @@ public class ProviderBootStrap {
                     .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG, 100)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(new ProvideInitializerChannel());
+                    .childHandler(new ProviderInitializerChannel());
 
             // 绑定端口，同步等待成功
             ChannelFuture f = b.bind(port).sync();

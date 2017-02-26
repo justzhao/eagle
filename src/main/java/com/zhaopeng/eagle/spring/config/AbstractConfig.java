@@ -5,18 +5,21 @@ package com.zhaopeng.eagle.spring.config;
  */
 public class AbstractConfig {
 
+    protected String PROVIDER_TYPE = "provider";
+
+    protected String CONSUMER_TYPE = "consumer";
+
     protected int port;
 
     protected String protocol;
 
     protected String host;
 
-    protected int  timeout;
+    protected int timeout;
 
     protected int threads;
 
     protected int accepts;
-
 
 
     public int getPort() {

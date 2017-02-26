@@ -1,6 +1,7 @@
 package com.zhaopeng.eagle.spring;
 
 import com.zhaopeng.eagle.entity.URL;
+import com.zhaopeng.eagle.provider.ProviderBootStrap;
 import com.zhaopeng.eagle.provider.ServiceFactory;
 import com.zhaopeng.eagle.registry.Registry;
 import com.zhaopeng.eagle.registry.RegistryFactory;
@@ -18,6 +19,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,22 +36,19 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
 
     private ApplicationContext applicationContext;
 
-    private List<RegistryConfig> registries;
+    private List<RegistryConfig> registries =new ArrayList<>();
+
+    private volatile boolean isExported;
 
 
     public void init() {
-        //   registryConfig = (RegistryConfig) applicationContext.getBean("registry");
 
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-
-
         this.applicationContext = applicationContext;
-
     }
-
 
     public String getInterfaceName() {
         return interfaceName;
@@ -93,11 +92,15 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
 
     }
 
+
+
     public void checkConfig() throws UnknownHostException {
         Map<String, EagleApplicationBean> configMap = applicationContext == null ? null : BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, EagleApplicationBean.class, false, false);
+
+
         if (configMap != null && configMap.size() > 0) {
 
-            EagleApplicationBean applicationBean = configMap.get(0);
+            EagleApplicationBean applicationBean = configMap.get("eagle");
             port = applicationBean.getPort();
             accepts = applicationBean.getAccepts();
             threads = applicationBean.getThreads();
@@ -125,9 +128,13 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
         //注册，然后缓存实例到map
         ServiceFactory.getInstance().getHandlerMap().put(interfaceName, applicationContext.getBean(ref));
         doRegister();
+        doExport();
 
     }
 
+    /**
+     * 注册
+     */
     public void doRegister() {
         if (registries == null || registries.size() < 1) {
             logger.error("没有注册中心");
@@ -135,12 +142,29 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
         }
         RegistryFactory factory = new ZookeeperRegistryFactory();
         Registry registry = factory.create(registries.get(0));
-        URL url = new URL(protocol,host,port,interfaceName);
+        URL url = new URL(protocol, host, port, interfaceName,PROVIDER_TYPE);
         registry.register(url);
 
     }
 
-    public  void  doExport(){
+    /**
+     * 启动netty，暴露服务。
+     */
+    public synchronized void doExport() {
+
+        if (isExported) return;
+
+        isExported = true;
+        logger.info("start netty");
+
+        try {
+            ProviderBootStrap.init(port);
+        } catch (Exception e) {
+
+            logger.error("fail start netty {}", e);
+        }
+        logger.info("netty init success");
+
 
     }
 }

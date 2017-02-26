@@ -25,7 +25,7 @@ public class ServiceFactory {
     public void serverStart()
     {
         try {
-            ProviderBootStrap.init();
+          //  ProviderBootStrap.init();
         } catch (Exception e) {
             e.printStackTrace();
         }

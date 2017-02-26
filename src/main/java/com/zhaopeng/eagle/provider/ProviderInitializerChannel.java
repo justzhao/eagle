@@ -16,7 +16,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 /**
  * Created by zhaopeng on 2016/10/29.
  */
-public class ProvideInitializerChannel extends ChannelInitializer<SocketChannel> {
+public class ProviderInitializerChannel extends ChannelInitializer<SocketChannel> {
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
 

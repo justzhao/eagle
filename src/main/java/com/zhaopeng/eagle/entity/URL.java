@@ -6,7 +6,7 @@ package com.zhaopeng.eagle.entity;
  */
 public class URL {
 
-
+    // 暂时默认为eagle
     private String protocol;
 
 
@@ -16,9 +16,11 @@ public class URL {
 
     private String interfaceName;
 
+    // 是消费者还是提供者
+    private String type;
+
 
     private String str;
-
 
 
     public String getProtocol() {
@@ -57,24 +59,33 @@ public class URL {
     }
 
 
-
-    public URL(String protocol, String host, int port, String interfaceName) {
+    public URL(String protocol, String host, int port, String interfaceName, String type) {
         this.protocol = protocol;
         this.host = host;
         this.port = port;
         this.interfaceName = interfaceName;
+        this.type = type;
     }
 
-    private String buildUrlString() {
+    private String buildUrlString() throws Exception {
         StringBuilder buf = new StringBuilder();
         if (protocol != null && protocol.length() > 0) {
+            buf.append("/");
             buf.append(protocol);
-            buf.append("://");
+            buf.append("/");
         }
+        if(interfaceName==null){
 
-        String  host = getHost();
+            throw new Exception("interfaceName is null");
+        }
+        buf.append(interfaceName);
+        buf.append("/");
+        buf.append(type);
+        buf.append("/");
 
-        if(host != null && host.length() > 0) {
+        String host = getHost();
+
+        if (host != null && host.length() > 0) {
             buf.append(host);
             if (port > 0) {
                 buf.append(":");
@@ -86,8 +97,12 @@ public class URL {
 
     @Override
     public String toString() {
-        if(str==null){
-            str=buildUrlString();
+        if (str == null) {
+            try {
+                str = buildUrlString();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return str;
     }
