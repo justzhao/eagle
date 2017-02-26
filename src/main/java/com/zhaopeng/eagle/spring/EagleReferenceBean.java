@@ -1,24 +1,39 @@
 package com.zhaopeng.eagle.spring;
 
+import com.zhaopeng.eagle.entity.URL;
 import com.zhaopeng.eagle.invoker.ProxyServiceFactory;
 import com.zhaopeng.eagle.invoker.config.InvokerConfig;
+import com.zhaopeng.eagle.registry.Registry;
+import com.zhaopeng.eagle.registry.RegistryFactory;
 import com.zhaopeng.eagle.registry.ServiceDiscovery;
 import com.zhaopeng.eagle.registry.config.RegistryConfig;
+import com.zhaopeng.eagle.registry.zookeeper.ZookeeperRegistryFactory;
+import com.zhaopeng.eagle.spring.config.AbstractConfig;
+import com.zhaopeng.eagle.spring.config.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+import java.util.List;
 
 /**
  * Created by zhaopeng on 2016/12/19.
  */
-public class EagleReferenceBean implements FactoryBean, ApplicationContextAware {
+public class EagleReferenceBean extends AbstractConfig implements FactoryBean, ApplicationContextAware, InitializingBean, Config {
+
+
+
+    private final static Logger logger = LoggerFactory.getLogger(EagleReferenceBean.class);
+
 
     private String interfaceName;
 
-    private int timeout;
 
-    private int retries;
+    private List<String> urls;
 
     private String url;
 
@@ -38,21 +53,6 @@ public class EagleReferenceBean implements FactoryBean, ApplicationContextAware 
         this.interfaceName = interfaceName;
     }
 
-    public int getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
-    }
-
-    public int getRetries() {
-        return retries;
-    }
-
-    public void setRetries(int retries) {
-        this.retries = retries;
-    }
 
     public Object getObj() {
         return obj;
@@ -86,8 +86,18 @@ public class EagleReferenceBean implements FactoryBean, ApplicationContextAware 
         this.serviceDiscovery = serviceDiscovery;
     }
 
+    public List<String> getUrls() {
+        return urls;
+    }
+
+    public void setUrls(List<String> urls) {
+        this.urls = urls;
+    }
+
     @Override
     public Object getObject() throws Exception {
+        // 返回对应的代理类吧。
+
         return this.obj;
     }
 
@@ -108,12 +118,62 @@ public class EagleReferenceBean implements FactoryBean, ApplicationContextAware 
         this.objType = Class.forName(this.interfaceName);
         this.obj = ProxyServiceFactory.newServiceInstance(this.objType, url);
 
-        InvokerConfig.getInstance().getSets().put("timeout", this.timeout);
+        InvokerConfig.getInstance().getSets().put("timeout", timeout);
         InvokerConfig.getInstance().getSets().put("retries", retries);
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // first
+        checkConfig();
+        refer();
+    }
+
+
+    public void refer() {
+        doRegister();
+        doRefer();
+    }
+
+    /**
+     * 消费者自己注册
+     */
+    public void doRegister() {
+
+        URL url = new URL(protocol, host, port, interfaceName, CONSUMER_TYPE);
+        RegistryFactory factory = new ZookeeperRegistryFactory();
+        Registry registry = factory.create(registries.get(0));
+        registry.register(url);
+
+    }
+
+    /**
+     * 服务订阅
+     */
+    public void doRefer() {
+
+        RegistryFactory factory = new ZookeeperRegistryFactory();
+        Registry registry = factory.create(registries.get(0));
+        // 用于获取provider的地址
+        URL url = new URL(protocol, null, port, interfaceName, PROVIDER_TYPE);
+
+        url.setParameters(getParameters());
+        urls = registry.subscribe(url);
+
+
+        try {
+            this.obj = ProxyServiceFactory.newServiceInstance(url);
+        } catch (Exception e) {
+
+            logger.error("refer service failure");
+
+            e.printStackTrace();
+        }
     }
 }

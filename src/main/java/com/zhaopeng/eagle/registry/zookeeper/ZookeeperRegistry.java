@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by zhaopeng on 2017/2/21.
@@ -20,21 +21,20 @@ public class ZookeeperRegistry extends AbstractRegistry {
     private ZooKeeper zookeeper;
 
 
-
-    public ZookeeperRegistry(){
+    public ZookeeperRegistry() {
 
     }
 
-    public ZookeeperRegistry(RegistryConfig registryConfig){
+    public ZookeeperRegistry(RegistryConfig registryConfig) {
         try {
-            this.zookeeper=new ZooKeeper(registryConfig.getAddress(), ZookeeperConstant.TIME_OUT,new ZookeeperWatch());
+            this.zookeeper = new ZooKeeper(registryConfig.getAddress(), ZookeeperConstant.TIME_OUT, new ZookeeperWatch());
         } catch (IOException e) {
-            logger.error("zk 客户端 实例化失败 {}"+e);
+            logger.error("zk 客户端 实例化失败 {}" + e);
             e.printStackTrace();
         }
     }
 
-    class ZookeeperWatch  implements Watcher{
+    class ZookeeperWatch implements Watcher {
 
         @Override
         public void process(WatchedEvent event) {
@@ -50,15 +50,29 @@ public class ZookeeperRegistry extends AbstractRegistry {
     }
 
     @Override
-    public void subscribe(URL url) {
-        super.subscribe(url);
+    public List<String> subscribe(URL url) {
 
+        return getChildren(url.toString());
 
+    }
+
+    public List<String> getChildren(String path) {
+
+        try {
+            return zookeeper.getChildren(path, true);
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 
     /**
-     *  按照路径添加节点
+     * 按照路径添加节点
+     *
      * @param path
      */
     public void create(String path) {
@@ -68,9 +82,10 @@ public class ZookeeperRegistry extends AbstractRegistry {
         }
         createNode(path);
     }
-    public void createNode(String path){
+
+    public void createNode(String path) {
         try {
-            zookeeper.create(path,null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+            zookeeper.create(path, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         } catch (KeeperException e) {
 
 

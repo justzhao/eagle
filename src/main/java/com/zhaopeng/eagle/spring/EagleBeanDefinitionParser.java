@@ -44,7 +44,6 @@ public class EagleBeanDefinitionParser implements BeanDefinitionParser {
             String id=element.getAttribute("id");
             String timeout=element.getAttribute("timeout");
             String retries=element.getAttribute("retries");
-
             beanDefinition.getPropertyValues().add("interfaceName",interfaceName);
             beanDefinition.getPropertyValues().add("timeout",timeout);
             beanDefinition.getPropertyValues().add("retries",retries);

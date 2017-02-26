@@ -27,6 +27,10 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
         this.url = url;
     }
 
+    public InvocationServiceProxy(URL url){
+
+    }
+
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
         Request request = new Request();

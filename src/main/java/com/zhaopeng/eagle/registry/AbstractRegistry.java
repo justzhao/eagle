@@ -3,6 +3,7 @@ package com.zhaopeng.eagle.registry;
 import com.zhaopeng.eagle.entity.URL;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * 服务的注册和发现
@@ -50,8 +51,9 @@ public abstract class AbstractRegistry implements Registry {
      * 订阅服务
      * @param url
      */
-    public void subscribe(URL url){
+    public List<String> subscribe(URL url){
 
+        return null;
     }
 
 }

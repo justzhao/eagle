@@ -12,16 +12,11 @@ import com.zhaopeng.eagle.spring.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by zhaopeng on 2016/11/17.
@@ -34,9 +29,8 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
 
     private String ref;
 
-    private ApplicationContext applicationContext;
 
-    private List<RegistryConfig> registries =new ArrayList<>();
+
 
     private volatile boolean isExported;
 
@@ -45,10 +39,6 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
 
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
 
     public String getInterfaceName() {
         return interfaceName;
@@ -87,40 +77,9 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
 
         // serviceRegistry.addNode(interfaceName, host);
         checkConfig();
-        checkRegistry();
+
         export();
 
-    }
-
-
-
-    public void checkConfig() throws UnknownHostException {
-        Map<String, EagleApplicationBean> configMap = applicationContext == null ? null : BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, EagleApplicationBean.class, false, false);
-
-
-        if (configMap != null && configMap.size() > 0) {
-
-            EagleApplicationBean applicationBean = configMap.get("eagle");
-            port = applicationBean.getPort();
-            accepts = applicationBean.getAccepts();
-            threads = applicationBean.getThreads();
-            host = InetAddress.getLocalHost().getHostAddress();
-            protocol = applicationBean.getProtocol();
-        } else {
-            logger.error("没有applicationBean");
-            return;
-        }
-
-    }
-
-    public void checkRegistry() {
-        Map<String, RegistryConfig> registryConfigMap = applicationContext == null ? null : BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, RegistryConfig.class, false, false);
-        if (registryConfigMap != null && registryConfigMap.size() > 0) {
-
-            for (RegistryConfig registryConfig : registryConfigMap.values()) {
-                registries.add(registryConfig);
-            }
-        }
     }
 
     public void export() {
@@ -142,7 +101,7 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
         }
         RegistryFactory factory = new ZookeeperRegistryFactory();
         Registry registry = factory.create(registries.get(0));
-        URL url = new URL(protocol, host, port, interfaceName,PROVIDER_TYPE);
+        URL url = new URL(protocol, host, port, interfaceName, PROVIDER_TYPE);
         registry.register(url);
 
     }
@@ -166,5 +125,10 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
         logger.info("netty init success");
 
 
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }

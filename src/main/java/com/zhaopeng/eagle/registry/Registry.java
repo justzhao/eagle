@@ -2,6 +2,8 @@ package com.zhaopeng.eagle.registry;
 
 import com.zhaopeng.eagle.entity.URL;
 
+import java.util.List;
+
 /**
  * Created by zhaopeng on 2017/2/23.
  */
@@ -16,5 +18,5 @@ public interface Registry {
      * 订阅服务
      * @param url
      */
-     void subscribe(URL url);
+     List<String> subscribe(URL url);
 }

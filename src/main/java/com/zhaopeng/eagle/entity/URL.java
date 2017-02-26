@@ -1,5 +1,8 @@
 package com.zhaopeng.eagle.entity;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  * 用来分装dubbo服务消费者或者提供者的方法url参数
  * Created by zhaopeng on 2017/2/20.
@@ -21,6 +24,9 @@ public class URL {
 
 
     private String str;
+
+
+    private Map<String, String> parameters;
 
 
     public String getProtocol() {
@@ -55,7 +61,29 @@ public class URL {
         this.interfaceName = interfaceName;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
+    }
+
     public URL() {
+        this.protocol = null;
+
+        this.host = null;
+        this.port = 0;
+
+        this.parameters = null;
     }
 
 
@@ -67,6 +95,16 @@ public class URL {
         this.type = type;
     }
 
+    public URL(String protocol, String host, int port, String interfaceName, String type, Map<String, String> parameters) {
+        this.protocol = protocol;
+        this.host = host;
+        this.port = port;
+        this.interfaceName = interfaceName;
+        this.type = type;
+        this.parameters = parameters;
+
+    }
+
     private String buildUrlString() throws Exception {
         StringBuilder buf = new StringBuilder();
         if (protocol != null && protocol.length() > 0) {
@@ -74,7 +112,7 @@ public class URL {
             buf.append(protocol);
             buf.append("/");
         }
-        if(interfaceName==null){
+        if (interfaceName == null) {
 
             throw new Exception("interfaceName is null");
         }
@@ -92,7 +130,28 @@ public class URL {
                 buf.append(port);
             }
         }
+        // 参数
+        buildParameters(buf);
         return buf.toString();
+    }
+
+    private void buildParameters(StringBuilder buf) {
+        if (getParameters() != null && getParameters().size() > 0) {
+            boolean first = true;
+            for (Map.Entry<String, String> entry : new TreeMap<String, String>(getParameters()).entrySet()) {
+                if (entry.getKey() != null && entry.getKey().length() > 0) {
+                    if (first) {
+                        buf.append("?");
+                        first = false;
+                    } else {
+                        buf.append("&");
+                    }
+                    buf.append(entry.getKey());
+                    buf.append("=");
+                    buf.append(entry.getValue() == null ? "" : entry.getValue().trim());
+                }
+            }
+        }
     }
 
     @Override
@@ -106,4 +165,6 @@ public class URL {
         }
         return str;
     }
+
+
 }
