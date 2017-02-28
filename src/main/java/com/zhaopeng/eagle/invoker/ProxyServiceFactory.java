@@ -45,7 +45,7 @@ public class ProxyServiceFactory {
         if (!interfaceClass.isInterface()) {
             throw new IllegalAccessException(interfaceClass.getName() + " must be interface");
         }
-        return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class<?>[]{interfaceClass}, new InvocationServiceProxy(url));
+        return (T) Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class<?>[]{interfaceClass}, new InvocationServiceProxy(url,interfaceClass));
 
     }
 }

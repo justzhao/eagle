@@ -1,5 +1,6 @@
 package com.zhaopeng.eagle.spring;
 
+import com.zhaopeng.eagle.common.Constants;
 import com.zhaopeng.eagle.entity.URL;
 import com.zhaopeng.eagle.invoker.ProxyServiceFactory;
 import com.zhaopeng.eagle.invoker.config.InvokerConfig;
@@ -146,7 +147,7 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
      */
     public void doRegister() {
 
-        URL url = new URL(protocol, host, port, interfaceName, CONSUMER_TYPE);
+        URL url = new URL(protocol, host, port, interfaceName, Constants.CONSUMER_SIDE);
         RegistryFactory factory = new ZookeeperRegistryFactory();
         Registry registry = factory.create(registries.get(0));
         registry.register(url);
@@ -161,19 +162,22 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
         RegistryFactory factory = new ZookeeperRegistryFactory();
         Registry registry = factory.create(registries.get(0));
         // 用于获取provider的地址
-        URL url = new URL(protocol, null, port, interfaceName, PROVIDER_TYPE);
-
+        URL url = new URL(protocol, null, port, interfaceName, Constants.PROVIDER_SIDE);
         url.setParameters(getParameters());
         urls = registry.subscribe(url);
-
-
         try {
-            this.obj = ProxyServiceFactory.newServiceInstance(url);
+            this.obj =createProxy(url);
         } catch (Exception e) {
 
-            logger.error("refer service failure");
+            logger.error("refer service failure {}",e);
 
-            e.printStackTrace();
         }
+    }
+
+    private <T> T createProxy(URL url) throws Exception {
+        this.objType = Class.forName(this.interfaceName);
+
+
+        return  ProxyServiceFactory.newServiceInstance(url);
     }
 }

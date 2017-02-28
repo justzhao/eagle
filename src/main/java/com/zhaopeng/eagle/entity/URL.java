@@ -1,5 +1,6 @@
 package com.zhaopeng.eagle.entity;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -28,6 +29,10 @@ public class URL {
 
     private Map<String, String> parameters;
 
+    /**
+     * 存放provider的urls
+     */
+    private List<String> urls;
 
     public String getProtocol() {
         return protocol;
@@ -71,6 +76,14 @@ public class URL {
 
     public Map<String, String> getParameters() {
         return parameters;
+    }
+
+    public List<String> getUrls() {
+        return urls;
+    }
+
+    public void setUrls(List<String> urls) {
+        this.urls = urls;
     }
 
     public void setParameters(Map<String, String> parameters) {
@@ -166,5 +179,15 @@ public class URL {
         return str;
     }
 
+    public String getParameter(String key, String defaultValue) {
+        String value = parameters.get(key);
+        return value != null ? value : defaultValue;
+    }
+
+
+    public int getParameter(String key, int defaultValue) {
+        String value = parameters.get(key);
+        return value != null ? Integer.valueOf(value).intValue() : defaultValue;
+    }
 
 }

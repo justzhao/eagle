@@ -1,5 +1,6 @@
 package com.zhaopeng.eagle.spring;
 
+import com.zhaopeng.eagle.common.Constants;
 import com.zhaopeng.eagle.entity.URL;
 import com.zhaopeng.eagle.provider.ProviderBootStrap;
 import com.zhaopeng.eagle.provider.ServiceFactory;
@@ -101,7 +102,7 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
         }
         RegistryFactory factory = new ZookeeperRegistryFactory();
         Registry registry = factory.create(registries.get(0));
-        URL url = new URL(protocol, host, port, interfaceName, PROVIDER_TYPE);
+        URL url = new URL(protocol, host, port, interfaceName, Constants.PROVIDER_SIDE);
         registry.register(url);
 
     }

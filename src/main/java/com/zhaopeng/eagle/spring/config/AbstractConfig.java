@@ -1,5 +1,6 @@
 package com.zhaopeng.eagle.spring.config;
 
+import com.zhaopeng.eagle.common.Constants;
 import com.zhaopeng.eagle.registry.config.RegistryConfig;
 import com.zhaopeng.eagle.spring.EagleApplicationBean;
 import org.slf4j.Logger;
@@ -21,9 +22,7 @@ public class AbstractConfig implements Config {
 
     private final static Logger logger = LoggerFactory.getLogger(AbstractConfig.class);
 
-    protected String PROVIDER_TYPE = "provider";
 
-    protected String CONSUMER_TYPE = "consumer";
 
     protected ApplicationContext applicationContext;
 
@@ -132,10 +131,10 @@ public class AbstractConfig implements Config {
 
         Map<String, String> map = new HashMap<>();
 
-        map.put("accepts", String.valueOf(accepts));
-        map.put("timeout", String.valueOf(timeout));
-        map.put("threads", String.valueOf(threads));
-        map.put("retries", String.valueOf(retries));
+        map.put(Constants.ACCEPTS, String.valueOf(accepts));
+        map.put(Constants.TIME_OUT, String.valueOf(timeout));
+        map.put(Constants.THREADS, String.valueOf(threads));
+        map.put(Constants.RETRIES, String.valueOf(retries));
         return map;
 
     }
