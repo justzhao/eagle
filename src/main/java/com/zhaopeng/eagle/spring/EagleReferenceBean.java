@@ -3,11 +3,9 @@ package com.zhaopeng.eagle.spring;
 import com.zhaopeng.eagle.common.Constants;
 import com.zhaopeng.eagle.entity.URL;
 import com.zhaopeng.eagle.invoker.ProxyServiceFactory;
-import com.zhaopeng.eagle.invoker.config.InvokerConfig;
 import com.zhaopeng.eagle.registry.Registry;
 import com.zhaopeng.eagle.registry.RegistryFactory;
 import com.zhaopeng.eagle.registry.ServiceDiscovery;
-import com.zhaopeng.eagle.registry.config.RegistryConfig;
 import com.zhaopeng.eagle.registry.zookeeper.ZookeeperRegistryFactory;
 import com.zhaopeng.eagle.spring.config.AbstractConfig;
 import com.zhaopeng.eagle.spring.config.Config;
@@ -42,7 +40,7 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
 
     private Class<?> objType;
 
-    private ApplicationContext applicationContext;
+
 
     private ServiceDiscovery serviceDiscovery;
 
@@ -113,14 +111,14 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
     }
 
     public void init() throws Exception {
-        RegistryConfig registryConfig = (RegistryConfig) applicationContext.getBean("registry");
+   /*     RegistryConfig registryConfig = (RegistryConfig) applicationContext.getBean("registry");
         serviceDiscovery = new ServiceDiscovery(registryConfig.getAddress());
         this.url = serviceDiscovery.getNodeValue(interfaceName);
         this.objType = Class.forName(this.interfaceName);
         this.obj = ProxyServiceFactory.newServiceInstance(this.objType, url);
 
         InvokerConfig.getInstance().getSets().put("timeout", timeout);
-        InvokerConfig.getInstance().getSets().put("retries", retries);
+        InvokerConfig.getInstance().getSets().put("retries", retries);*/
     }
 
     @Override

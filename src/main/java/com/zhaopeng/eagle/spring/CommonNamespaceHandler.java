@@ -10,7 +10,6 @@ public class CommonNamespaceHandler extends NamespaceHandlerSupport {
 
     public void init() {
         registerBeanDefinitionParser("application",new EagleApplicationBeanParser());
-
         registerBeanDefinitionParser("registry",new EagleBeanDefinitionParser(RegistryConfig.class,true));
         registerBeanDefinitionParser("service", new EagleServiceBeanParser());
         registerBeanDefinitionParser("reference",new EagleBeanDefinitionParser(EagleReferenceBean.class,true));

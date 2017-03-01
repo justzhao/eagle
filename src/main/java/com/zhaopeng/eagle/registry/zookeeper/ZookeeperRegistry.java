@@ -52,8 +52,14 @@ public class ZookeeperRegistry extends AbstractRegistry {
     @Override
     public List<String> subscribe(URL url) {
 
-        return getChildren(url.toString());
+        try {
+            String path=url.getPath();
+            return getChildren(path);
+        }catch (Exception e){
 
+            logger.error("get url fail {} ",e);
+        }
+        return null;
     }
 
     public List<String> getChildren(String path) {

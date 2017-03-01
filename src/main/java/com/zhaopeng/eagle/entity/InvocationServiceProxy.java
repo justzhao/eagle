@@ -63,8 +63,7 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
         if(urls==null||urls.isEmpty()){
             return null;
         }
-        String str = urls.get(0);
-        InvokerBootStrap invokerBootStrap = new InvokerBootStrap(str);
+        InvokerBootStrap invokerBootStrap = new InvokerBootStrap(urls.get(0));
         invokerBootStrap.connect();
         InvokerServiceHandler handler = invokerBootStrap.chooseHandler();
         while (retries > 0) {

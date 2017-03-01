@@ -126,24 +126,20 @@ public class URL {
             buf.append("/");
         }
         if (interfaceName == null) {
-
             throw new Exception("interfaceName is null");
         }
         buf.append(interfaceName);
         buf.append("/");
         buf.append(type);
-        buf.append("/");
-
         String host = getHost();
-
         if (host != null && host.length() > 0) {
+            buf.append("/");
             buf.append(host);
             if (port > 0) {
                 buf.append(":");
                 buf.append(port);
             }
         }
-        // 参数
         buildParameters(buf);
         return buf.toString();
     }
@@ -188,6 +184,27 @@ public class URL {
     public int getParameter(String key, int defaultValue) {
         String value = parameters.get(key);
         return value != null ? Integer.valueOf(value).intValue() : defaultValue;
+    }
+
+
+    public String getPath() throws Exception {
+        StringBuilder buf = new StringBuilder();
+        if (protocol != null && protocol.length() > 0) {
+            buf.append("/");
+            buf.append(protocol);
+            buf.append("/");
+        }
+        if (interfaceName == null) {
+
+            throw new Exception("interfaceName is null");
+        }
+        buf.append(interfaceName);
+        buf.append("/");
+        buf.append(type);
+
+        return buf.toString();
+
+
     }
 
 }
