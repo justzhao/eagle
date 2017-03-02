@@ -1,11 +1,15 @@
 package com.zhaopeng.eagle.invoker;
 
 
+import com.zhaopeng.eagle.entity.URL;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -19,6 +23,19 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by zhaopeng on 2016/10/30.
  */
 public class InvokerBootStrap {
+
+    private final static Logger logger = LoggerFactory.getLogger(InvokerBootStrap.class);
+
+    private URL url;
+
+
+    public URL getUrl() {
+        return url;
+    }
+
+    public void setUrl(URL url) {
+        this.url = url;
+    }
 
     public static void main(String args[]) {
         InvokerBootStrap invokerBootStrap = new InvokerBootStrap();
@@ -49,26 +66,36 @@ public class InvokerBootStrap {
         this.host = url;
     }
 
+    public InvokerBootStrap(URL url) {
+        // 调用服务发现获取服务地址。
+        this.url = url;
+    }
+
     Channel channel;
     private CopyOnWriteArrayList<InvokerServiceHandler> connectedHandlers = new CopyOnWriteArrayList<>();
 
 
     public void connect() throws Exception {
 
+        final List<String> urls = url.getUrls();
 
+        if (urls == null || urls.isEmpty()) {
+
+            logger.error("no provider");
+            return;
+        }
+
+        String hostPort[] = urls.get(0).split(":");
+        final String host = hostPort[0];
+        final int port = Integer.valueOf(hostPort[1]);
         threadPoolExecutor.submit(new Runnable() {
             @Override
             public void run() {
-
-
                 try {
                     Bootstrap b = new Bootstrap();
-
-                    b.group(eventLoopGroup).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, true).handler(new InvokerInitializerChannel());
+                    b.group(eventLoopGroup).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, true).handler(new InvokerInitializerChannel(url));
                     // 发起异步连接操作
-
                     ChannelFuture channelFuture = b.connect(host, port).sync();
-
                     channelFuture.addListener(new ChannelFutureListener() {
                         public void operationComplete(final ChannelFuture channelFuture) throws Exception {
                             if (channelFuture.isSuccess()) {
@@ -78,9 +105,6 @@ public class InvokerBootStrap {
                         }
                     });
                     channelFuture.channel().closeFuture().sync();
-
-                    System.out.println("over");
-
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {

@@ -163,6 +163,7 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
         URL url = new URL(protocol, null, port, interfaceName, Constants.PROVIDER_SIDE);
         url.setParameters(getParameters());
         urls = registry.subscribe(url);
+        url.setUrls(urls);
         try {
             this.obj =createProxy(url);
         } catch (Exception e) {

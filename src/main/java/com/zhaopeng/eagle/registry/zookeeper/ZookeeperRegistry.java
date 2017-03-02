@@ -53,11 +53,11 @@ public class ZookeeperRegistry extends AbstractRegistry {
     public List<String> subscribe(URL url) {
 
         try {
-            String path=url.getPath();
+            String path = url.getPath();
             return getChildren(path);
-        }catch (Exception e){
+        } catch (Exception e) {
 
-            logger.error("get url fail {} ",e);
+            logger.error("get url fail {} ", e);
         }
         return null;
     }
@@ -65,7 +65,8 @@ public class ZookeeperRegistry extends AbstractRegistry {
     public List<String> getChildren(String path) {
 
         try {
-            return zookeeper.getChildren(path, true);
+            List<String> urls = zookeeper.getChildren(path, true);
+            return urls;
         } catch (KeeperException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

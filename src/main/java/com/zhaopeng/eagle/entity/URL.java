@@ -147,7 +147,7 @@ public class URL {
     private void buildParameters(StringBuilder buf) {
         if (getParameters() != null && getParameters().size() > 0) {
             boolean first = true;
-            for (Map.Entry<String, String> entry : new TreeMap<String, String>(getParameters()).entrySet()) {
+            for (Map.Entry<String, String> entry : new TreeMap<>(getParameters()).entrySet()) {
                 if (entry.getKey() != null && entry.getKey().length() > 0) {
                     if (first) {
                         buf.append("?");
