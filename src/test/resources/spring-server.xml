@@ -8,10 +8,7 @@
        http://www.zhaoljhpeng.cn/schema/eagle/eagle.xsd">
 
     <bean id="storeService"  class="com.zhaopeng.demo.provider.StoreServiceImpl" scope="prototype"></bean>
-
     <eagle:registry address="127.0.0.1:2181"></eagle:registry>
-
     <eagle:application port="8080" protocol="eagle" accepts="20"></eagle:application>
-
     <eagle:service interfaceName="com.zhaopeng.demo.api.StoreService" ref="storeService"></eagle:service>
 </beans>

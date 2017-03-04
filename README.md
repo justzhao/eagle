@@ -5,16 +5,27 @@
  - 新增zookeeper 实现服务发现
  - 提供provider 服务端线程个数和连接数配置
  - 客户端调用超时和重试
+ - 多个服务端的负载均衡，随机从多个服务提供者获取一个
+ - 客户端启动的时缓存服务端的信息,实现服务订阅
 
  ### todo
- - zk服务发现代码重构和节点值优化
- 服务发现和服务注册应该在客户端和服务端。需要优化zk的节点值。如果根据调用的服务找到服务对应的URL (IP地址)
- 同一个服务多个提供者，需要同时注册到注册中心，多个服务如何负载均衡
-
- - 客户端启动的时候服，服务信息本地缓存,实现服务订阅
-
  - 心跳检测
  -
+
+### 例子
+
+#### 服务端
+         <bean id="storeService"  class="com.zhaopeng.demo.provider.StoreServiceImpl" scope="prototype"></bean>
+         <eagle:registry address="127.0.0.1:2181"></eagle:registry>
+         <eagle:application port="8080" protocol="eagle" accepts="20"></eagle:application>
+          <eagle:service interfaceName="com.zhaopeng.demo.api.StoreService" ref="storeService"></eagle:service>
+
+#### 客户端
+
+        <eagle:application port="8080" protocol="eagle" accepts="20"></eagle:application>
+        <eagle:registry address="127.0.0.1:2181"></eagle:registry>
+        <eagle:reference id="storeService" interface="com.zhaopeng.demo.api.StoreService"></eagle:reference>
+
 
 
 

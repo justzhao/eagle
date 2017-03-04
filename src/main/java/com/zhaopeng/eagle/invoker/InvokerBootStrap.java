@@ -48,12 +48,15 @@ public class InvokerBootStrap {
 
     private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(16, 16, 600L, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(65536));
 
+    Channel channel;
+    private CopyOnWriteArrayList<InvokerServiceHandler> connectedHandlers = new CopyOnWriteArrayList<>();
+
+
     EventLoopGroup eventLoopGroup = new NioEventLoopGroup(4);
     protected long connectTimeoutMillis = 6000;
     private ReentrantLock lock = new ReentrantLock();
     private Condition connected = lock.newCondition();
-    private String host = "127.0.0.1";
-    private int port = 8080;
+
 
     private AtomicInteger auto = new AtomicInteger(0);
 
@@ -63,17 +66,13 @@ public class InvokerBootStrap {
 
     public InvokerBootStrap(String url) {
         // 调用服务发现获取服务地址。
-        this.host = url;
+
     }
 
     public InvokerBootStrap(URL url) {
         // 调用服务发现获取服务地址。
-        this.url = url;
+
     }
-
-    Channel channel;
-    private CopyOnWriteArrayList<InvokerServiceHandler> connectedHandlers = new CopyOnWriteArrayList<>();
-
 
     public void connect() throws Exception {
 
@@ -96,14 +95,7 @@ public class InvokerBootStrap {
                     b.group(eventLoopGroup).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, true).handler(new InvokerInitializerChannel(url));
                     // 发起异步连接操作
                     ChannelFuture channelFuture = b.connect(host, port).sync();
-                    channelFuture.addListener(new ChannelFutureListener() {
-                        public void operationComplete(final ChannelFuture channelFuture) throws Exception {
-                            if (channelFuture.isSuccess()) {
-                                InvokerServiceHandler handler = channelFuture.channel().pipeline().get(InvokerServiceHandler.class);
-                                addHandler(handler);
-                            }
-                        }
-                    });
+                    channelFuture.addListener(new NettyConnectedListener());
                     channelFuture.channel().closeFuture().sync();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -164,5 +156,17 @@ public class InvokerBootStrap {
 
     public void setChannel(Channel channel) {
         this.channel = channel;
+    }
+
+
+    class NettyConnectedListener implements ChannelFutureListener{
+
+        @Override
+        public void operationComplete(ChannelFuture channelFuture) throws Exception {
+            if (channelFuture.isSuccess()) {
+                InvokerServiceHandler handler = channelFuture.channel().pipeline().get(InvokerServiceHandler.class);
+                addHandler(handler);
+            }
+        }
     }
 }
