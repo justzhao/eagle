@@ -1,9 +1,12 @@
 package com.zhaopeng.eagle.spring;
 
-import com.zhaopeng.eagle.provider.ServiceFactory;
+import com.zhaopeng.eagle.util.AsyncTaskSubmitUtil;
 import org.springframework.beans.factory.DisposableBean;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -24,10 +27,13 @@ public class EagleApplicationBean implements DisposableBean {
     public void init() {
         executor = new ThreadPoolExecutor(threads, threads, 600l, TimeUnit.SECONDS,
                 new ArrayBlockingQueue<Runnable>(65536));
-        ServiceFactory.getInstance().getSetsMap().put("executor",executor);
-        ServiceFactory.getInstance().getSetsMap().put("accepts",accepts);
-        ServiceFactory instance = ServiceFactory.getInstance();
-        instance.serverStart();
+
+        AsyncTaskSubmitUtil taskSubmitUtil=   AsyncTaskSubmitUtil.newThreadPoolInstance();
+        taskSubmitUtil.setExecutorService(executor);
+      //  ServiceFactory.getInstance().getSetsMap().put("executor",executor);
+       // ServiceFactory.getInstance().getSetsMap().put("accepts",accepts);
+       // ServiceFactory instance = ServiceFactory.getInstance();
+       // instance.serverStart();
     }
 
 

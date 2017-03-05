@@ -16,6 +16,8 @@ public class Request {
     // 参数
     private Object[] parameters;
 
+    public  boolean heartEvent=false;
+
     public String getRequestId() {
         return requestId;
     }
@@ -54,5 +56,13 @@ public class Request {
 
     public void setParameters(Object[] parameters) {
         this.parameters = parameters;
+    }
+
+    public boolean isHeartEvent() {
+        return heartEvent;
+    }
+
+    public void setHeartEvent(boolean heartEvent) {
+        this.heartEvent = heartEvent;
     }
 }

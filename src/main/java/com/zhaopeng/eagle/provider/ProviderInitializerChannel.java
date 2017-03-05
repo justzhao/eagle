@@ -4,6 +4,7 @@ package com.zhaopeng.eagle.provider;
 import com.zhaopeng.eagle.entity.Request;
 
 import com.zhaopeng.eagle.entity.Response;
+import com.zhaopeng.eagle.entity.URL;
 import com.zhaopeng.eagle.protocol.Decoder;
 import com.zhaopeng.eagle.protocol.Encoder;
 
@@ -17,6 +18,16 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
  * Created by zhaopeng on 2016/10/29.
  */
 public class ProviderInitializerChannel extends ChannelInitializer<SocketChannel> {
+
+    private URL url;
+
+    public ProviderInitializerChannel() {
+    }
+
+    public ProviderInitializerChannel(URL url) {
+        this.url = url;
+    }
+
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
 
@@ -26,6 +37,6 @@ public class ProviderInitializerChannel extends ChannelInitializer<SocketChannel
 
         pipeline.addLast(new Encoder(Response.class));
 
-        pipeline.addLast(new ProviderServiceHandler());
+        pipeline.addLast(new ProviderServiceHandler(url));
     }
 }

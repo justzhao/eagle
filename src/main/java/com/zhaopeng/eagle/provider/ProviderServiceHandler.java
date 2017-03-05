@@ -1,5 +1,8 @@
 package com.zhaopeng.eagle.provider;
 
+import com.zhaopeng.eagle.common.Constants;
+import com.zhaopeng.eagle.entity.URL;
+import com.zhaopeng.eagle.util.AsyncTaskSubmitUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,10 +31,19 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
 
     private AtomicInteger accepts = new AtomicInteger();
 
+    private URL url;
+
+    public ProviderServiceHandler() {
+    }
+
+    public ProviderServiceHandler(URL url) {
+        this.url = url;
+    }
+
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, final Request request) throws Exception {
-        executor = (ExecutorService) ServiceFactory.getInstance().getSetsMap().get("executor");
-        executor.submit(new Runnable() {
+     //   executor = (ExecutorService) ServiceFactory.getInstance().getSetsMap().get("executor");
+        AsyncTaskSubmitUtil.submit(new Runnable() {
             @Override
             public void run() {
                 Response response = new Response();
@@ -63,8 +75,9 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         // 从map的中取出Channel的个数，大于配置值就报错。
-        int accepts = (int) ServiceFactory.getInstance().getSetsMap().get("accepts");
+        //int accepts = (int) ServiceFactory.getInstance().getSetsMap().get("accepts");
 
+        int accepts=url.getParameter(Constants.ACCEPTS,100);
         if (this.accepts.get() > accepts) {
 
             logger.error("channels 的个数超过配置");

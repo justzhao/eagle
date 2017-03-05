@@ -30,11 +30,7 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
 
     private String ref;
 
-
-
-
     private volatile boolean isExported;
-
 
     public void init() {
 
@@ -71,7 +67,7 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        RegistryConfig registryConfig = (RegistryConfig) applicationContext.getBean("registry");
+       // RegistryConfig registryConfig = (RegistryConfig) applicationContext.getBean("registry");
 
         // serviceRegistry = new ServiceRegistry(registryConfig.getAddress());
         //String host = InetAddress.getLocalHost().getHostAddress();
@@ -116,9 +112,11 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
 
         isExported = true;
         logger.info("start netty");
+        URL url = new URL(protocol, host, port, interfaceName, Constants.PROVIDER_SIDE);
+        url.setParameters(getParameters());
 
         try {
-            ProviderBootStrap.init(port);
+            ProviderBootStrap.init(url);
         } catch (Exception e) {
 
             logger.error("fail start netty {}", e);

@@ -14,6 +14,9 @@ public class Response {
     //返回结果
     private Object result;
 
+    // 是否心跳
+    public  boolean heartEvent=false;
+
     public String getRequestId() {
         return requestId;
     }
@@ -36,5 +39,14 @@ public class Response {
 
     public void setResult(Object result) {
         this.result = result;
+    }
+
+
+    public boolean isHeartEvent() {
+        return heartEvent;
+    }
+
+    public void setHeartEvent(boolean heartEvent) {
+        this.heartEvent = heartEvent;
     }
 }

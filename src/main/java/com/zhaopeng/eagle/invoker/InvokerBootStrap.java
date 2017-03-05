@@ -71,6 +71,7 @@ public class InvokerBootStrap {
 
     public InvokerBootStrap(URL url) {
         // 调用服务发现获取服务地址。
+        this.url=url;
 
     }
 
@@ -166,6 +167,10 @@ public class InvokerBootStrap {
             if (channelFuture.isSuccess()) {
                 InvokerServiceHandler handler = channelFuture.channel().pipeline().get(InvokerServiceHandler.class);
                 addHandler(handler);
+                logger.info("connect success");
+            }else {
+
+                logger.error("connect error");
             }
         }
     }
