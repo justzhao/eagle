@@ -111,14 +111,6 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
     }
 
     public void init() throws Exception {
-   /*     RegistryConfig registryConfig = (RegistryConfig) applicationContext.getBean("registry");
-        serviceDiscovery = new ServiceDiscovery(registryConfig.getAddress());
-        this.url = serviceDiscovery.getNodeValue(interfaceName);
-        this.objType = Class.forName(this.interfaceName);
-        this.obj = ProxyServiceFactory.newServiceInstance(this.objType, url);
-
-        InvokerConfig.getInstance().getSets().put("timeout", timeout);
-        InvokerConfig.getInstance().getSets().put("retries", retries);*/
     }
 
     @Override
@@ -162,6 +154,7 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
         // 用于获取provider的地址
         URL url = new URL(protocol, null, port, interfaceName, Constants.PROVIDER_SIDE);
         url.setParameters(getParameters());
+        // 订阅了服务，也需要监听。
         urls = registry.subscribe(url);
         url.setUrls(urls);
         try {
