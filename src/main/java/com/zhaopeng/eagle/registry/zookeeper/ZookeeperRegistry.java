@@ -45,7 +45,7 @@ public class ZookeeperRegistry extends AbstractRegistry {
     @Override
     public void register(URL url) {
         super.register(url);
-        create(url.toString());
+        create(url.toString(),true);
 
     }
 
@@ -81,17 +81,47 @@ public class ZookeeperRegistry extends AbstractRegistry {
      * 按照路径添加节点
      *
      * @param path
+     * @param ephemeral 是否临时
      */
-    public void create(String path) {
+    void create(String path, boolean ephemeral) {
         int i = path.lastIndexOf('/');
         if (i > 0) {
-            create(path.substring(0, i));
+            // 父节点都是永久的
+            create(path.substring(0, i), false);
         }
-        createNode(path);
+        if (ephemeral) {
+            createEphemeral(path);
+        } else {
+            createPersistent(path);
+        }
+
     }
 
-    public void createNode(String path) {
+    /**
+     * 创建临时节点
+     *
+     * @param path
+     */
+    public void createEphemeral(String path) {
         try {
+            // 创建临时节点
+            zookeeper.create(path, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+        } catch (KeeperException e) {
+
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 创建永久节点
+     *
+     * @param path
+     */
+    public void createPersistent(String path) {
+        try {
+            // 创建临时节点
             zookeeper.create(path, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
         } catch (KeeperException e) {
 
@@ -99,6 +129,6 @@ public class ZookeeperRegistry extends AbstractRegistry {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
+
 }

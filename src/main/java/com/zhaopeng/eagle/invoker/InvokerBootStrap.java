@@ -85,7 +85,8 @@ public class InvokerBootStrap {
             return;
         }
 
-        String hostPort[] = urls.get(0).split(":");
+        String providerUrl=url.getProviderUrl();
+        String hostPort[] = providerUrl.split(":");
         final String host = hostPort[0];
         final int port = Integer.valueOf(hostPort[1]);
         threadPoolExecutor.submit(new Runnable() {

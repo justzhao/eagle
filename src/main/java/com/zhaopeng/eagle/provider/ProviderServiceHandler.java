@@ -1,20 +1,17 @@
 package com.zhaopeng.eagle.provider;
 
 import com.zhaopeng.eagle.common.Constants;
-import com.zhaopeng.eagle.entity.URL;
-import com.zhaopeng.eagle.util.AsyncTaskSubmitUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.zhaopeng.eagle.entity.Request;
 import com.zhaopeng.eagle.entity.Response;
+import com.zhaopeng.eagle.entity.URL;
+import com.zhaopeng.eagle.util.AsyncTaskSubmitUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.sf.cglib.reflect.FastClass;
 import net.sf.cglib.reflect.FastMethod;
-import org.springframework.context.ApplicationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -25,9 +22,6 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
 
     private final static Logger logger = LoggerFactory.getLogger(ProviderServiceHandler.class);
 
-    private ApplicationContext springContext;
-
-    private ExecutorService executor;
 
     private AtomicInteger accepts = new AtomicInteger();
 
@@ -42,7 +36,6 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
 
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, final Request request) throws Exception {
-     //   executor = (ExecutorService) ServiceFactory.getInstance().getSetsMap().get("executor");
         AsyncTaskSubmitUtil.submit(new Runnable() {
             @Override
             public void run() {
@@ -159,24 +152,5 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
     }
 
 
-    public ApplicationContext getSpringContext() {
-        return springContext;
-    }
 
-    public void setSpringContext(ApplicationContext springContext) {
-        this.springContext = springContext;
-    }
-
-    public ExecutorService getExecutor() {
-        return executor;
-    }
-
-    public void setExecutor(ExecutorService executor) {
-        this.executor = executor;
-    }
-
-
-    public static void main(String args[]) {
-        logger.info("12313123");
-    }
 }

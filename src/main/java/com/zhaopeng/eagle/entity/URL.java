@@ -201,10 +201,22 @@ public class URL {
         buf.append(interfaceName);
         buf.append("/");
         buf.append(type);
-
         return buf.toString();
+    }
+
+    public String getProviderUrl() {
+
+        if (urls == null || urls.isEmpty()) return null;
+
+        int size=urls.size();
+
+        int index = (int) Math.round(Math.random()*(size-1));
+
+
+        return  urls.get(index);
 
 
     }
+
 
 }

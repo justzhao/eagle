@@ -7,10 +7,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ServiceFactory {
 
-    /**
-     * 配置map
-     */
-    private ConcurrentHashMap<String,Object> setsMap=new ConcurrentHashMap<>();
 
     public ConcurrentHashMap<String,Object> handlerMap=new ConcurrentHashMap<>();
 
@@ -22,26 +18,11 @@ public class ServiceFactory {
         return ServiceFactoryHolder.instance;
     }
 
-    public void serverStart()
-    {
-        try {
-          //  ProviderBootStrap.init();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private ServiceFactory(){
 
     }
 
-    public ConcurrentHashMap<String, Object> getSetsMap() {
-        return setsMap;
-    }
-
-    public void setSetsMap(ConcurrentHashMap<String, Object> setsMap) {
-        this.setsMap = setsMap;
-    }
 
     public ConcurrentHashMap<String, Object> getHandlerMap() {
         return handlerMap;
