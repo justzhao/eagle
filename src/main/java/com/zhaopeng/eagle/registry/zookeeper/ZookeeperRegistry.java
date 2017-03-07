@@ -3,22 +3,27 @@ package com.zhaopeng.eagle.registry.zookeeper;
 import com.zhaopeng.eagle.entity.URL;
 import com.zhaopeng.eagle.registry.AbstractRegistry;
 import com.zhaopeng.eagle.registry.config.RegistryConfig;
+import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.IZkStateListener;
 import org.I0Itec.zkclient.ZkClient;
-import org.apache.zookeeper.*;
+import org.apache.zookeeper.WatchedEvent;
+import org.apache.zookeeper.Watcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 
 /**
  * Created by zhaopeng on 2017/2/21.
  */
-public class ZookeeperRegistry extends AbstractRegistry {
+public class ZookeeperRegistry extends AbstractRegistry<IZkChildListener> {
 
     private final static Logger logger = LoggerFactory.getLogger(ZookeeperRegistry.class);
 
-    //   private ZooKeeper zookeeper;
+
 
     private final ZkClient client;
 
@@ -26,6 +31,13 @@ public class ZookeeperRegistry extends AbstractRegistry {
      * 当前连接的状态
      */
     private Watcher.Event.KeeperState state = Watcher.Event.KeeperState.Disconnected;
+
+
+    /**
+     *  url =》 ChildListener 和对应节点的监听器
+     */
+    private final ConcurrentMap<URL, ConcurrentMap<ChildListener,IZkChildListener >> zkListeners = new ConcurrentHashMap<>();
+
 
 
     public ZookeeperRegistry(RegistryConfig registryConfig) {
