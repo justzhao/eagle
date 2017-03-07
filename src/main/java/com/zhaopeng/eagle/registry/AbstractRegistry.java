@@ -56,4 +56,12 @@ public abstract class AbstractRegistry implements Registry {
         return null;
     }
 
+
+    /**
+     * 节点状态变化
+     * @param state
+     */
+    protected void stateChanged(int state) {
+
+    }
 }

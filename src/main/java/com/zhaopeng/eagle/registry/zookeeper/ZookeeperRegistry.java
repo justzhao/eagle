@@ -3,12 +3,12 @@ package com.zhaopeng.eagle.registry.zookeeper;
 import com.zhaopeng.eagle.entity.URL;
 import com.zhaopeng.eagle.registry.AbstractRegistry;
 import com.zhaopeng.eagle.registry.config.RegistryConfig;
-import com.zhaopeng.eagle.registry.config.ZookeeperConstant;
+import org.I0Itec.zkclient.IZkStateListener;
+import org.I0Itec.zkclient.ZkClient;
 import org.apache.zookeeper.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -18,20 +18,35 @@ public class ZookeeperRegistry extends AbstractRegistry {
 
     private final static Logger logger = LoggerFactory.getLogger(ZookeeperRegistry.class);
 
-    private ZooKeeper zookeeper;
+    //   private ZooKeeper zookeeper;
 
+    private final ZkClient client;
 
-    public ZookeeperRegistry() {
+    /**
+     * 当前连接的状态
+     */
+    private Watcher.Event.KeeperState state = Watcher.Event.KeeperState.Disconnected;
 
-    }
 
     public ZookeeperRegistry(RegistryConfig registryConfig) {
-        try {
-            this.zookeeper = new ZooKeeper(registryConfig.getAddress(), ZookeeperConstant.TIME_OUT, new ZookeeperWatch());
-        } catch (IOException e) {
-            logger.error("zk 客户端 实例化失败 {}" + e);
-            e.printStackTrace();
-        }
+
+        // this.zookeeper = new ZooKeeper(registryConfig.getAddress(), ZookeeperConstant.TIME_OUT, new ZookeeperWatch());
+        client = new ZkClient(registryConfig.getAddress());
+        client.subscribeStateChanges(new IZkStateListener() {
+            public void handleStateChanged(Watcher.Event.KeeperState state) throws Exception {
+                ZookeeperRegistry.this.state = state;
+                if (state == Watcher.Event.KeeperState.Disconnected) {
+                    stateChanged(StateListener.DISCONNECTED);
+                } else if (state == Watcher.Event.KeeperState.SyncConnected) {
+                    stateChanged(StateListener.CONNECTED);
+                }
+            }
+
+            public void handleNewSession() throws Exception {
+                stateChanged(StateListener.RECONNECTED);
+            }
+        });
+
     }
 
     class ZookeeperWatch implements Watcher {
@@ -45,7 +60,7 @@ public class ZookeeperRegistry extends AbstractRegistry {
     @Override
     public void register(URL url) {
         super.register(url);
-        create(url.toString(),true);
+        create(url.toString(), true);
 
     }
 
@@ -64,16 +79,11 @@ public class ZookeeperRegistry extends AbstractRegistry {
 
     public List<String> getChildren(String path) {
 
-        try {
-            List<String> urls = zookeeper.getChildren(path, true);
-            return urls;
-        } catch (KeeperException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
-        return null;
+        List<String> urls = client.getChildren(path);
+        return urls;
+
+
     }
 
 
@@ -103,15 +113,10 @@ public class ZookeeperRegistry extends AbstractRegistry {
      * @param path
      */
     public void createEphemeral(String path) {
-        try {
-            // 创建临时节点
-            zookeeper.create(path, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
-        } catch (KeeperException e) {
 
+        // 创建临时节点
+        client.createEphemeral(path);
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -120,15 +125,10 @@ public class ZookeeperRegistry extends AbstractRegistry {
      * @param path
      */
     public void createPersistent(String path) {
-        try {
-            // 创建临时节点
-            zookeeper.create(path, null, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-        } catch (KeeperException e) {
 
+        client.createPersistent(path);
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
+
 
 }
