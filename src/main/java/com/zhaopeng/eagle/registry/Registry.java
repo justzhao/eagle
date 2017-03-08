@@ -1,6 +1,7 @@
 package com.zhaopeng.eagle.registry;
 
 import com.zhaopeng.eagle.entity.URL;
+import com.zhaopeng.eagle.registry.zookeeper.ChildListener;
 
 import java.util.List;
 
@@ -19,4 +20,12 @@ public interface Registry {
      * @param url
      */
      List<String> subscribe(URL url);
+
+    /**
+     * 订阅服务并且添加监听器
+     * @param url
+     * @param childListener
+     * @return
+     */
+    List<String> subscribe(URL url, ChildListener childListener);
 }

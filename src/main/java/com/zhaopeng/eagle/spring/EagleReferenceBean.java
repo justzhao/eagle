@@ -3,10 +3,7 @@ package com.zhaopeng.eagle.spring;
 import com.zhaopeng.eagle.common.Constants;
 import com.zhaopeng.eagle.entity.URL;
 import com.zhaopeng.eagle.invoker.ProxyServiceFactory;
-import com.zhaopeng.eagle.registry.Registry;
-import com.zhaopeng.eagle.registry.RegistryFactory;
-import com.zhaopeng.eagle.registry.ServiceDiscovery;
-import com.zhaopeng.eagle.registry.zookeeper.ZookeeperRegistryFactory;
+import com.zhaopeng.eagle.registry.zookeeper.ChildListener;
 import com.zhaopeng.eagle.spring.config.AbstractConfig;
 import com.zhaopeng.eagle.spring.config.Config;
 import org.slf4j.Logger;
@@ -25,65 +22,34 @@ import java.util.List;
 public class EagleReferenceBean extends AbstractConfig implements FactoryBean, ApplicationContextAware, InitializingBean, Config {
 
 
-
     private final static Logger logger = LoggerFactory.getLogger(EagleReferenceBean.class);
-
-
-    private String interfaceName;
 
 
     private List<String> urls;
 
-    private String url;
 
     private Object obj;
 
-    private Class<?> objType;
-
-
-
-    private ServiceDiscovery serviceDiscovery;
-
-    public String getInterfaceName() {
-        return interfaceName;
-    }
-
-    public void setInterfaceName(String interfaceName) {
-        this.interfaceName = interfaceName;
-    }
+    // private Class<?> objType;
 
 
     public Object getObj() {
         return obj;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
 
     public void setObj(Object obj) {
         this.obj = obj;
     }
 
-    public Class<?> getObjType() {
+/*    public Class<?> getObjType() {
         return objType;
     }
 
     public void setObjType(Class<?> objType) {
         this.objType = objType;
-    }
+    }*/
 
-    public ServiceDiscovery getServiceDiscovery() {
-        return serviceDiscovery;
-    }
-
-    public void setServiceDiscovery(ServiceDiscovery serviceDiscovery) {
-        this.serviceDiscovery = serviceDiscovery;
-    }
 
     public List<String> getUrls() {
         return urls;
@@ -102,7 +68,7 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
 
     @Override
     public Class<?> getObjectType() {
-        return this.objType;
+        return this.obj.getClass();
     }
 
     @Override
@@ -121,7 +87,7 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        // first
+
         checkConfig();
         refer();
     }
@@ -137,9 +103,7 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
      */
     public void doRegister() {
 
-        URL url = new URL(protocol, host, port, interfaceName, Constants.CONSUMER_SIDE);
-        RegistryFactory factory = new ZookeeperRegistryFactory();
-        Registry registry = factory.create(registries.get(0));
+        url.setType(Constants.CONSUMER_SIDE);
         registry.register(url);
 
     }
@@ -149,27 +113,39 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
      */
     public void doRefer() {
 
-        RegistryFactory factory = new ZookeeperRegistryFactory();
-        Registry registry = factory.create(registries.get(0));
+
         // 用于获取provider的地址
-        URL url = new URL(protocol, null, port, interfaceName, Constants.PROVIDER_SIDE);
+        url.setHost(null);
+        url.setType(Constants.PROVIDER_SIDE);
         url.setParameters(getParameters());
-        // 订阅了服务，也需要监听。
-        urls = registry.subscribe(url);
+        // 订阅了服务，也需要监听。如果provider的节点发生变化，需要重新生成this.obj
+        urls = registry.subscribe(url, new ChildListener() {
+            @Override
+            public void childChanged(String path, List<String> children) {
+                EagleReferenceBean.this.notify(path, children);
+            }
+        });
         url.setUrls(urls);
-        try {
-            this.obj =createProxy(url);
-        } catch (Exception e) {
+        this.obj = createProxy(url);
 
-            logger.error("refer service failure {}",e);
-
-        }
     }
 
-    private <T> T createProxy(URL url) throws Exception {
-        this.objType = Class.forName(this.interfaceName);
+    private <T> T createProxy(URL url) {
+        //this.objType = Class.forName(this.interfaceName);
+        return ProxyServiceFactory.newServiceInstance(url);
+    }
 
 
-        return  ProxyServiceFactory.newServiceInstance(url);
+    /**
+     * 当某个provider的节点变化的时候需要重新获取服务提供者的地址
+     *
+     * @param path
+     * @param children
+     */
+    public void notify(String path, List<String> children) {
+
+        logger.info("节点 {} 的 变化后的孩子节点是 {}",path,children);
+        url.setUrls(children);
+        this.obj = createProxy(url);
     }
 }

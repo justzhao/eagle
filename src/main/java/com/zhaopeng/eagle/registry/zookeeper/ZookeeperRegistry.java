@@ -24,7 +24,6 @@ public class ZookeeperRegistry extends AbstractRegistry<IZkChildListener> {
     private final static Logger logger = LoggerFactory.getLogger(ZookeeperRegistry.class);
 
 
-
     private final ZkClient client;
 
     /**
@@ -34,10 +33,9 @@ public class ZookeeperRegistry extends AbstractRegistry<IZkChildListener> {
 
 
     /**
-     *  url =》 ChildListener 和对应节点的监听器
+     * url =》 ChildListener 和对应节点的监听器
      */
-    private final ConcurrentMap<URL, ConcurrentMap<ChildListener,IZkChildListener >> zkListeners = new ConcurrentHashMap<>();
-
+    private final ConcurrentMap<URL, ConcurrentMap<ChildListener, IZkChildListener>> zkListeners = new ConcurrentHashMap<>();
 
 
     public ZookeeperRegistry(RegistryConfig registryConfig) {
@@ -50,6 +48,7 @@ public class ZookeeperRegistry extends AbstractRegistry<IZkChildListener> {
                 if (state == Watcher.Event.KeeperState.Disconnected) {
                     stateChanged(StateListener.DISCONNECTED);
                 } else if (state == Watcher.Event.KeeperState.SyncConnected) {
+                    //重新连接的话需要重新注册节点
                     stateChanged(StateListener.CONNECTED);
                 }
             }
@@ -58,6 +57,7 @@ public class ZookeeperRegistry extends AbstractRegistry<IZkChildListener> {
                 stateChanged(StateListener.RECONNECTED);
             }
         });
+
 
     }
 
@@ -82,11 +82,32 @@ public class ZookeeperRegistry extends AbstractRegistry<IZkChildListener> {
         try {
             String path = url.getPath();
             return getChildren(path);
+
+
         } catch (Exception e) {
 
             logger.error("get url fail {} ", e);
         }
         return null;
+    }
+
+    @Override
+    public List<String> subscribe(URL url, final ChildListener childListener) {
+        try {
+            final String path = url.getPath();
+
+            return client.subscribeChildChanges(path, new IZkChildListener() {
+                @Override
+                public void handleChildChange(String parentPath, List<String> currentChilds) throws Exception {
+                    childListener.childChanged(path, currentChilds);
+                }
+            });
+        } catch (Exception e) {
+            logger.error("订阅服务失败 {}", e);
+        }
+        return null;
+
+
     }
 
     public List<String> getChildren(String path) {
@@ -137,9 +158,9 @@ public class ZookeeperRegistry extends AbstractRegistry<IZkChildListener> {
      * @param path
      */
     public void createPersistent(String path) {
-
-        client.createPersistent(path);
-
+        if (!client.exists(path)) {
+            client.createPersistent(path);
+        }
     }
 
 

@@ -1,7 +1,11 @@
 package com.zhaopeng.eagle.spring.config;
 
 import com.zhaopeng.eagle.common.Constants;
+import com.zhaopeng.eagle.entity.URL;
+import com.zhaopeng.eagle.registry.Registry;
+import com.zhaopeng.eagle.registry.RegistryFactory;
 import com.zhaopeng.eagle.registry.config.RegistryConfig;
+import com.zhaopeng.eagle.registry.zookeeper.ZookeeperRegistryFactory;
 import com.zhaopeng.eagle.spring.EagleApplicationBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +27,15 @@ public class AbstractConfig implements Config {
     private final static Logger logger = LoggerFactory.getLogger(AbstractConfig.class);
 
 
-
     protected ApplicationContext applicationContext;
 
     protected List<RegistryConfig> registries = new ArrayList<>();
+
+    protected URL url;
+
+    protected Registry registry;
+
+    protected String interfaceName;
 
     protected int port;
 
@@ -42,6 +51,14 @@ public class AbstractConfig implements Config {
     protected int timeout;
 
     protected int retries;
+
+    public String getInterfaceName() {
+        return interfaceName;
+    }
+
+    public void setInterfaceName(String interfaceName) {
+        this.interfaceName = interfaceName;
+    }
 
 
     public int getPort() {
@@ -125,6 +142,10 @@ public class AbstractConfig implements Config {
                 registries.add(registryConfig);
             }
         }
+        RegistryFactory factory = new ZookeeperRegistryFactory();
+        this.registry = factory.create(registries.get(0));
+
+        url = new URL(protocol, host, port, interfaceName, Constants.CONSUMER_SIDE);
     }
 
     public Map<String, String> getParameters() {
