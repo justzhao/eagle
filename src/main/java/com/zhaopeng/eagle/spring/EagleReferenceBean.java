@@ -30,8 +30,6 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
 
     private Object obj;
 
-    // private Class<?> objType;
-
 
     public Object getObj() {
         return obj;
@@ -41,14 +39,6 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
     public void setObj(Object obj) {
         this.obj = obj;
     }
-
-/*    public Class<?> getObjType() {
-        return objType;
-    }
-
-    public void setObjType(Class<?> objType) {
-        this.objType = objType;
-    }*/
 
 
     public List<String> getUrls() {
@@ -113,7 +103,6 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
      */
     public void doRefer() {
 
-
         // 用于获取provider的地址
         url.setHost(null);
         url.setType(Constants.PROVIDER_SIDE);
@@ -127,11 +116,9 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
         });
         url.setUrls(urls);
         this.obj = createProxy(url);
-
     }
 
     private <T> T createProxy(URL url) {
-        //this.objType = Class.forName(this.interfaceName);
         return ProxyServiceFactory.newServiceInstance(url);
     }
 
@@ -143,8 +130,7 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
      * @param children
      */
     public void notify(String path, List<String> children) {
-
-        logger.info("节点 {} 的 变化后的孩子节点是 {}",path,children);
+        logger.info("节点 {} 的 变化后的孩子节点是 {}", path, children);
         url.setUrls(children);
         this.obj = createProxy(url);
     }

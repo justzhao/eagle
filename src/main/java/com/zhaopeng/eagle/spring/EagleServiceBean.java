@@ -1,7 +1,6 @@
 package com.zhaopeng.eagle.spring;
 
 import com.zhaopeng.eagle.common.Constants;
-import com.zhaopeng.eagle.entity.URL;
 import com.zhaopeng.eagle.provider.ProviderBootStrap;
 import com.zhaopeng.eagle.provider.ServiceFactory;
 import com.zhaopeng.eagle.registry.Registry;
@@ -67,16 +66,9 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
 
     @Override
     public void afterPropertiesSet() throws Exception {
-       // RegistryConfig registryConfig = (RegistryConfig) applicationContext.getBean("registry");
 
-        // serviceRegistry = new ServiceRegistry(registryConfig.getAddress());
-        //String host = InetAddress.getLocalHost().getHostAddress();
-
-        // serviceRegistry.addNode(interfaceName, host);
         checkConfig();
-
         export();
-
     }
 
     public void export() {
@@ -98,7 +90,7 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
         }
         RegistryFactory factory = new ZookeeperRegistryFactory();
         Registry registry = factory.create(registries.get(0));
-        URL url = new URL(protocol, host, port, interfaceName, Constants.PROVIDER_SIDE);
+        url.setType(Constants.PROVIDER_SIDE);
         registry.register(url);
 
     }
@@ -112,7 +104,8 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
 
         isExported = true;
         logger.info("start netty");
-        URL url = new URL(protocol, host, port, interfaceName, Constants.PROVIDER_SIDE);
+        //   URL url = new URL(protocol, host, port, interfaceName, Constants.PROVIDER_SIDE);
+        url.setType(Constants.PROVIDER_SIDE);
         url.setParameters(getParameters());
 
         try {

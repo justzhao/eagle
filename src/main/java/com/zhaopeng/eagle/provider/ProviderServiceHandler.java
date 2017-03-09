@@ -41,14 +41,20 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
             public void run() {
                 Response response = new Response();
                 response.setRequestId(request.getRequestId());
-                try {
-                    response.setResult(handle(request));
-                } catch (Throwable throwable) {
-                    response.setError("出错了");
-                    throwable.printStackTrace();
-                } finally {
-                    ctx.writeAndFlush(response);
+                if (request.isHeartEvent()) {
+
+                    response.setHeartEvent(true);
+                } else {
+                    try {
+                        response.setResult(handle(request));
+                    } catch (Throwable throwable) {
+                        response.setError("出错了");
+                        throwable.printStackTrace();
+                    } finally {
+                        ctx.writeAndFlush(response);
+                    }
                 }
+
             }
         });
     }
@@ -70,7 +76,7 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
         // 从map的中取出Channel的个数，大于配置值就报错。
         //int accepts = (int) ServiceFactory.getInstance().getSetsMap().get("accepts");
 
-        int accepts=url.getParameter(Constants.ACCEPTS,100);
+        int accepts = url.getParameter(Constants.ACCEPTS, 100);
         if (this.accepts.get() > accepts) {
 
             logger.error("channels 的个数超过配置");
@@ -150,7 +156,6 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
         FastMethod serviceFastMethod = serviceFastClass.getMethod(methodName, parameterTypes);
         return serviceFastMethod.invoke(serviceBean, parameters);
     }
-
 
 
 }

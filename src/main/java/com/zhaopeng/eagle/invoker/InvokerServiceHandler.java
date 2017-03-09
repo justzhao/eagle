@@ -37,6 +37,10 @@ public class InvokerServiceHandler extends SimpleChannelInboundHandler<Response>
     protected void channelRead0(final ChannelHandlerContext ctx, Response response) throws Exception {
         RPCFuture future = rpcFutureConcurrentHashMap.get(response.getRequestId());
         if (future != null) {
+            if(response.isHeartEvent()){
+                logger.info("Received heartbeat from remote channel{}",  channel.remoteAddress());
+            }
+
             future.setResponse(response);
             rpcFutureConcurrentHashMap.remove(response.getRequestId());
             ctx.close();
