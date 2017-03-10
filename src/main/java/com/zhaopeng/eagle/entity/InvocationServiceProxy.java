@@ -53,7 +53,7 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
         int retries = url.getParameter(Constants.RETRIES, 3);
         InvokerBootStrap invokerBootStrap = new InvokerBootStrap(url);
         invokerBootStrap.connect();
-        InvokerServiceHandler handler = invokerBootStrap.chooseHandler();
+        InvokerServiceHandler handler = invokerBootStrap.getInvokerServiceHandler();
         // 发出心跳
         HeartBeatClient.runHeart(handler);
         while (retries > 0) {
