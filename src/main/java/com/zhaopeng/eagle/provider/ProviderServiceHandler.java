@@ -44,6 +44,7 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
                 if (request.isHeartEvent()) {
 
                     response.setHeartEvent(true);
+                    ctx.writeAndFlush(response);
                 } else {
                     try {
                         response.setResult(handle(request));
@@ -81,7 +82,6 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
 
             logger.error("channels 的个数超过配置");
             throw new Exception("Channels 太多了");
-            //return;
         }
         this.accepts.getAndIncrement();
         logger.info("register accepts is " + this.accepts.get() + " and sets accepts is " + accepts);

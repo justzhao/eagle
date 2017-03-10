@@ -37,26 +37,20 @@ public class InvokerBootStrap {
         this.url = url;
     }
 
-    public static void main(String args[]) {
-        InvokerBootStrap invokerBootStrap = new InvokerBootStrap();
-        try {
-            invokerBootStrap.connect();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(16, 16, 600L, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(65536));
 
     Channel channel;
+
     private CopyOnWriteArrayList<InvokerServiceHandler> connectedHandlers = new CopyOnWriteArrayList<>();
 
-
     EventLoopGroup eventLoopGroup = new NioEventLoopGroup(4);
-    protected long connectTimeoutMillis = 6000;
-    private ReentrantLock lock = new ReentrantLock();
-    private Condition connected = lock.newCondition();
 
+    protected long connectTimeoutMillis = 6000;
+
+    private ReentrantLock lock = new ReentrantLock();
+
+    private Condition connected = lock.newCondition();
 
     private AtomicInteger auto = new AtomicInteger(0);
 
@@ -71,7 +65,7 @@ public class InvokerBootStrap {
 
     public InvokerBootStrap(URL url) {
         // 调用服务发现获取服务地址。
-        this.url=url;
+        this.url = url;
 
     }
 
@@ -85,7 +79,7 @@ public class InvokerBootStrap {
             return;
         }
 
-        String providerUrl=url.getProviderUrl();
+        String providerUrl = url.getProviderUrl();
         String hostPort[] = providerUrl.split(":");
         final String host = hostPort[0];
         final int port = Integer.valueOf(hostPort[1]);
@@ -115,8 +109,11 @@ public class InvokerBootStrap {
     }
 
     public InvokerServiceHandler chooseHandler() throws InterruptedException {
+
         CopyOnWriteArrayList<InvokerServiceHandler> handlers = (CopyOnWriteArrayList<InvokerServiceHandler>) this.connectedHandlers.clone();
+
         int size = handlers.size();
+
         while (size <= 0) {
             try {
                 boolean available = waitingForHandler();
@@ -125,7 +122,6 @@ public class InvokerBootStrap {
                     size = handlers.size();
                 }
             } catch (InterruptedException e) {
-
                 throw new RuntimeException("Can't connect any servers!", e);
             }
         }
@@ -161,7 +157,7 @@ public class InvokerBootStrap {
     }
 
 
-    class NettyConnectedListener implements ChannelFutureListener{
+    class NettyConnectedListener implements ChannelFutureListener {
 
         @Override
         public void operationComplete(ChannelFuture channelFuture) throws Exception {
@@ -169,7 +165,7 @@ public class InvokerBootStrap {
                 InvokerServiceHandler handler = channelFuture.channel().pipeline().get(InvokerServiceHandler.class);
                 addHandler(handler);
                 logger.info("connect success");
-            }else {
+            } else {
 
                 logger.error("connect error");
             }

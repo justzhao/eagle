@@ -10,10 +10,14 @@ public class HeartBeatTask implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(HeartBeatTask.class);
 
+    public HeartBeatTask(HeartBeatAction action) {
+        this.action = action;
+    }
+
+    HeartBeatAction action;
+
     @Override
     public void run() {
-
-
-
+        action.runHearBeat();
     }
 }

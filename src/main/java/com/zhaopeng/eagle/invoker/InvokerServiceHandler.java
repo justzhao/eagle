@@ -17,33 +17,33 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InvokerServiceHandler extends SimpleChannelInboundHandler<Response> {
 
     private final static Logger logger = LoggerFactory.getLogger(InvokerServiceHandler.class);
+
     ConcurrentHashMap<String, RPCFuture> rpcFutureConcurrentHashMap = new ConcurrentHashMap<>();
 
     private volatile Channel channel;
 
     private URL url;
 
-    public InvokerServiceHandler(){
+    public InvokerServiceHandler() {
         super();
     }
 
 
-    public InvokerServiceHandler(URL url){
+    public InvokerServiceHandler(URL url) {
         super();
-        this.url=url;
+        this.url = url;
     }
 
     @Override
     protected void channelRead0(final ChannelHandlerContext ctx, Response response) throws Exception {
         RPCFuture future = rpcFutureConcurrentHashMap.get(response.getRequestId());
         if (future != null) {
-            if(response.isHeartEvent()){
-                logger.info("Received heartbeat from remote channel{}",  channel.remoteAddress());
+            if (response.isHeartEvent()) {
+                logger.info("Received heartbeat from remote channel{}", channel.remoteAddress());
             }
-
             future.setResponse(response);
             rpcFutureConcurrentHashMap.remove(response.getRequestId());
-            ctx.close();
+            //   ctx.close();
         } else {
             logger.error("not response");
         }
@@ -68,14 +68,14 @@ public class InvokerServiceHandler extends SimpleChannelInboundHandler<Response>
 
 
         RPCFuture rpcFuture = new RPCFuture(request);
-        int timeout=url.getParameter(Constants.TIME_OUT,1000);
+        int timeout = url.getParameter(Constants.TIME_OUT, 1000);
         rpcFuture.setTimeout(timeout);
         rpcFutureConcurrentHashMap.put(request.getRequestId(), rpcFuture);
         ChannelFuture future = channel.writeAndFlush(request);
         future.addListener(new ChannelFutureListener() {
             public void operationComplete(final ChannelFuture channelFuture) throws Exception {
                 if (channelFuture.isSuccess()) {
-                   logger.info(" 成功调用 !");
+                    logger.info(" 成功调用 !");
                 }
             }
         });

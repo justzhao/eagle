@@ -84,6 +84,7 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
      * 注册
      */
     public void doRegister() {
+        url.setInterfaceName(interfaceName);
         if (registries == null || registries.size() < 1) {
             logger.error("没有注册中心");
             return;

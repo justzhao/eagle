@@ -13,8 +13,8 @@ import java.lang.reflect.Proxy;
  * Created by zhaopeng on 2016/10/29.
  */
 public class ProxyServiceFactory {
-    private final static Logger logger = LoggerFactory.getLogger(ProxyServiceFactory.class);
 
+    private final static Logger logger = LoggerFactory.getLogger(ProxyServiceFactory.class);
 
     @SuppressWarnings("unchecked")
     public static <T> T newServiceInstance(Class<T> interfaceClass) throws IllegalAccessException {
