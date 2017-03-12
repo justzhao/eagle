@@ -37,16 +37,11 @@ public class InvokerBootStrap {
     }
 
 
-    //  private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(16, 16, 600L, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(65536));
-
-
     private InvokerServiceHandler invokerServiceHandler;
 
-  //  private CopyOnWriteArrayList<InvokerServiceHandler> connectedHandlers = new CopyOnWriteArrayList<>();
 
     EventLoopGroup eventLoopGroup = new NioEventLoopGroup(4);
 
-   // protected long connectTimeoutMillis = 6000;
 
     private ReentrantLock lock = new ReentrantLock();
 
@@ -54,14 +49,6 @@ public class InvokerBootStrap {
 
     private AtomicInteger auto = new AtomicInteger(0);
 
-    public InvokerBootStrap() {
-        // 调用服务发现获取服务地址。
-    }
-
-    public InvokerBootStrap(String url) {
-        // 调用服务发现获取服务地址。
-
-    }
 
     public InvokerBootStrap(URL url) {
         // 调用服务发现获取服务地址。
@@ -77,16 +64,14 @@ public class InvokerBootStrap {
         this.invokerServiceHandler = invokerServiceHandler;
     }
 
-    public void connect() throws Exception {
+    public void connect() {
 
         final List<String> urls = url.getUrls();
 
         if (urls == null || urls.isEmpty()) {
-
             logger.error("no provider");
             return;
         }
-
         String providerUrl = url.getProviderUrl();
         String hostPort[] = providerUrl.split(":");
         final String host = hostPort[0];
@@ -98,7 +83,7 @@ public class InvokerBootStrap {
             // 发起异步连接操作
             ChannelFuture channelFuture = b.connect(host, port).sync();
             channelFuture.addListener(new NettyConnectedListener());
-          //  channelFuture.channel().closeFuture().sync();
+            //   channelFuture.channel().closeFuture();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -108,49 +93,7 @@ public class InvokerBootStrap {
 
     }
 
-/*    private void addHandler(InvokerServiceHandler handler) {
-        connectedHandlers.add(handler);
-        signalAvailableHandler();
-    }*/
 
-/*    public InvokerServiceHandler chooseHandler() throws InterruptedException {
-
-        CopyOnWriteArrayList<InvokerServiceHandler> handlers = (CopyOnWriteArrayList<InvokerServiceHandler>) this.connectedHandlers.clone();
-
-        int size = handlers.size();
-
-        while (size <= 0) {
-            try {
-                boolean available = waitingForHandler();
-                if (available) {
-                    handlers = (CopyOnWriteArrayList<InvokerServiceHandler>) this.connectedHandlers.clone();
-                    size = handlers.size();
-                }
-            } catch (InterruptedException e) {
-                throw new RuntimeException("Can't connect any servers!", e);
-            }
-        }
-        return connectedHandlers.get((auto.getAndAdd(1) + size) % size);
-    }*/
-
-
- /*   private boolean waitingForHandler() throws InterruptedException {
-        lock.lock();
-        try {
-            return connected.await(this.connectTimeoutMillis, TimeUnit.MILLISECONDS);
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    private void signalAvailableHandler() {
-        lock.lock();
-        try {
-            connected.signalAll();
-        } finally {
-            lock.unlock();
-        }
-    }*/
 
 
     class NettyConnectedListener implements ChannelFutureListener {

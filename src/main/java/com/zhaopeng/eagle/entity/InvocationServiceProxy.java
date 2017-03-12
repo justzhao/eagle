@@ -21,20 +21,30 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
 
     URL url;
 
-    public InvocationServiceProxy(Class<T> interfaceClass) {
-        this.interfaceClass = interfaceClass;
+    InvokerBootStrap invoker;
+
+
+    public InvokerBootStrap getInvoker() {
+        return invoker;
     }
 
-    public InvocationServiceProxy(Class<T> interfaceClass, String url) {
-        this.interfaceClass = interfaceClass;
-
+    public void setInvoker(InvokerBootStrap invoker) {
+        this.invoker = invoker;
     }
 
     public InvocationServiceProxy(URL url, Class<T> interfaceClass) {
         this.interfaceClass = interfaceClass;
         this.url = url;
+        initInvoker();
 
+    }
 
+    public void initInvoker() {
+        this.invoker = new InvokerBootStrap(url);
+        invoker.connect();
+        InvokerServiceHandler handler = invoker.getInvokerServiceHandler();
+        // 发出心跳
+        HeartBeatClient.runHeart(handler);
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -50,12 +60,11 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
 
     public Object invoke(Request request) throws Throwable {
 
+        if (invoker == null) {
+            initInvoker();
+        }
         int retries = url.getParameter(Constants.RETRIES, 3);
-        InvokerBootStrap invokerBootStrap = new InvokerBootStrap(url);
-        invokerBootStrap.connect();
-        InvokerServiceHandler handler = invokerBootStrap.getInvokerServiceHandler();
-        // 发出心跳
-        HeartBeatClient.runHeart(handler);
+        InvokerServiceHandler handler = invoker.getInvokerServiceHandler();
         while (retries > 0) {
             RPCFuture future = handler.sendRequest(request);
             if (future.get() != null) {
