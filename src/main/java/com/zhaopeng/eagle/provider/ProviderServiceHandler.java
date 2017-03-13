@@ -27,8 +27,6 @@ public class ProviderServiceHandler extends SimpleChannelInboundHandler<Request>
 
     private URL url;
 
-    public ProviderServiceHandler() {
-    }
 
     public ProviderServiceHandler(URL url) {
         this.url = url;

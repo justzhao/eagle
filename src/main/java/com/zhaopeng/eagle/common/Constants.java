@@ -1,5 +1,7 @@
 package com.zhaopeng.eagle.common;
 
+import java.util.regex.Pattern;
+
 /**
  * Created by zhaopeng on 2017/2/28.
  */
@@ -21,6 +23,9 @@ public class Constants {
 
     public static final String RETRIES = "retries";
 
+
+    public static final Pattern COMMA_SPLIT_PATTERN = Pattern
+            .compile("\\s*[,]+\\s*");
 
 
 }

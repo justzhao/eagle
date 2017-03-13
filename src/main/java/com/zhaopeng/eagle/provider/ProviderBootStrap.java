@@ -19,7 +19,6 @@ public class ProviderBootStrap {
 
     public static  void  init(URL url) throws Exception {
         int port=url.getPort();
-        //init(port);
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
