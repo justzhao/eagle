@@ -9,8 +9,10 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 
 /**
  * Created by zhaopeng on 2017/3/13.
@@ -59,6 +61,12 @@ public class AnnotationBean extends AbstractConfig implements DisposableBean, Be
 
         if (annotationPackage == null || annotationPackage.length() == 0) {
             return;
+        }
+
+        if (beanFactory instanceof BeanDefinitionRegistry) {
+            ClassPathBeanDefinitionScanner scanner=new ClassPathBeanDefinitionScanner((BeanDefinitionRegistry)beanFactory);
+
+
         }
 
     }
