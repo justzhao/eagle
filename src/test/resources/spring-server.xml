@@ -15,5 +15,5 @@
    <!-- <bean id="storeService"  class="com.zhaopeng.demo.provider.StoreServiceImpl" scope="prototype"></bean>
     <eagle:service interfaceName="com.zhaopeng.demo.api.StoreService" ref="storeService"></eagle:service>-->
 
-    <eagle:annotation package="com.zhaopeng.demo.annotation" />
+    <eagle:annotation package="com.zhaopeng.demo.annotation"/>
 </beans>

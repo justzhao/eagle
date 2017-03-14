@@ -108,7 +108,7 @@ public class AnnotationBean extends AbstractConfig implements DisposableBean, Be
         if (!isMatchPackage(bean)) {
             return bean;
         }
-
+        // 在此处暴露服务的。
         Service service = bean.getClass().getAnnotation(Service.class);
     /*    if (service != null) {
             ServiceBean<Object> serviceConfig = new ServiceBean<Object>(service);
