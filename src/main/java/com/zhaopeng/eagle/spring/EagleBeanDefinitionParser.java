@@ -1,5 +1,7 @@
 package com.zhaopeng.eagle.spring;
 
+import com.google.common.base.Strings;
+import com.zhaopeng.eagle.annotation.AnnotationBean;
 import com.zhaopeng.eagle.registry.config.RegistryConfig;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -47,8 +49,14 @@ public class EagleBeanDefinitionParser implements BeanDefinitionParser {
             beanDefinition.getPropertyValues().add("interfaceName",interfaceName);
             beanDefinition.getPropertyValues().add("timeout",timeout);
             beanDefinition.getPropertyValues().add("retries",retries);
-
-
+            parserContext.getRegistry().registerBeanDefinition(id, beanDefinition);
+        }else if(AnnotationBean.class.equals(beanClass)){
+            String id=element.getAttribute("id");
+            if(Strings.isNullOrEmpty(id)&&required){
+                id = beanClass.getName();
+            }
+            String packages=element.getAttribute("package");
+            beanDefinition.getPropertyValues().add("annotationPackage",packages);
             parserContext.getRegistry().registerBeanDefinition(id, beanDefinition);
         }
         return beanDefinition;
