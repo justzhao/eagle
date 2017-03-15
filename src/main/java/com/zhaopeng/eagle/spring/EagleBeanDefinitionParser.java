@@ -35,7 +35,7 @@ public class EagleBeanDefinitionParser implements BeanDefinitionParser {
         beanDefinition.setLazyInit(false);
         if(RegistryConfig.class.equals(beanClass)){
             String address=element.getAttribute("address");
-            beanDefinition.setInitMethodName("init");
+           // beanDefinition.setInitMethodName("init");
             beanDefinition.setScope(BeanDefinition.SCOPE_SINGLETON);
             beanDefinition.getPropertyValues().add("address",address);
             parserContext.getRegistry().registerBeanDefinition("registry", beanDefinition);

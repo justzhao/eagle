@@ -10,4 +10,14 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Service {
+
+    Class<?> interfaceClass() default void.class;
+
+    String interfaceName() default "";
+
+    String version() default "";
+
+    String group() default "";
+
+    boolean export() default false;
 }

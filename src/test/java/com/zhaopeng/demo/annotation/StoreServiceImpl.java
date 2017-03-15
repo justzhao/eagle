@@ -1,5 +1,6 @@
 package com.zhaopeng.demo.annotation;
 
+import com.zhaopeng.demo.api.StoreService;
 import com.zhaopeng.eagle.annotation.Service;
 
 /**
@@ -7,5 +8,10 @@ import com.zhaopeng.eagle.annotation.Service;
  */
 
 @Service
-public class StoreServiceImpl {
+public class StoreServiceImpl implements StoreService {
+
+    @Override
+    public String getAllStore(String input) {
+        return "the store id is "+input;
+    }
 }

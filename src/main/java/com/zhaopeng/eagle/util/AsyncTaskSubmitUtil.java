@@ -37,7 +37,6 @@ public class AsyncTaskSubmitUtil {
 
         if (executorService == null) return;
         executorService.submit(task);
-        // ThreadPoolExecutor threadPoolExecutor=newThreadPoolInstance();
-        //  threadPoolExecutor.submit(task);
+
     }
 }

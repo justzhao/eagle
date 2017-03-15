@@ -1,6 +1,7 @@
 package com.zhaopeng.eagle.annotation;
 
 import com.zhaopeng.eagle.common.Constants;
+import com.zhaopeng.eagle.spring.EagleServiceBean;
 import com.zhaopeng.eagle.spring.config.AbstractConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +92,7 @@ public class AnnotationBean extends AbstractConfig implements DisposableBean, Be
      */
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        return null;
+        return bean;
     }
 
     /**
@@ -110,18 +111,28 @@ public class AnnotationBean extends AbstractConfig implements DisposableBean, Be
         }
         // 在此处暴露服务的。
         Service service = bean.getClass().getAnnotation(Service.class);
-    /*    if (service != null) {
-            ServiceBean<Object> serviceConfig = new ServiceBean<Object>(service);
+
+        if (service != null) {
+
+            EagleServiceBean serviceBean = new EagleServiceBean();
             if (void.class.equals(service.interfaceClass())
                     && "".equals(service.interfaceName())) {
-                if (bean.getClass().getInterfaces().length > 0) {
-                    serviceConfig.setInterface(bean.getClass().getInterfaces()[0]);
-                } else {
+                if (bean.getClass().getInterfaces().length <= 0) {
                     throw new IllegalStateException("Failed to export remote service class " + bean.getClass().getName() + ", cause: The @Service undefined interfaceClass or interfaceName, and the service class unimplemented any interfaces.");
                 }
+                serviceBean.setInterfaceName(bean.getClass().getInterfaces()[0].getName());
             }
-        }*/
-        return null;
+
+            serviceBean.setApplicationContext(applicationContext);
+
+            serviceBean.checkConfig();
+
+            serviceBean.export();
+            serviceBean.putRef(bean);
+
+        }
+
+        return bean;
     }
 
     @Override

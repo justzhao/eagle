@@ -13,7 +13,6 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -118,14 +117,19 @@ public class AbstractConfig implements Config {
     }
 
     @Override
-    public void checkConfig() throws UnknownHostException {
+    public void checkConfig()  {
         Map<String, EagleApplicationBean> configMap = applicationContext == null ? null : BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, EagleApplicationBean.class, false, false);
         if (configMap != null && configMap.size() > 0) {
             EagleApplicationBean applicationBean = configMap.get("eagle");
             port = applicationBean.getPort();
             accepts = applicationBean.getAccepts();
             threads = applicationBean.getThreads();
-            host = InetAddress.getLocalHost().getHostAddress();
+            try {
+                host = InetAddress.getLocalHost().getHostAddress();
+            }catch (Exception e){
+                logger.error(" get host error {}",e);
+            }
+
             protocol = applicationBean.getProtocol();
         } else {
             logger.error("没有applicationBean");

@@ -69,15 +69,21 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
 
         checkConfig();
         export();
+        putRef(applicationContext.getBean(ref));
     }
 
     public void export() {
 
         //注册，然后缓存实例到map
-        ServiceFactory.getInstance().getHandlerMap().put(interfaceName, applicationContext.getBean(ref));
+        //    ServiceFactory.getInstance().getHandlerMap().put(interfaceName, a);
+
         doRegister();
         doExport();
 
+    }
+
+    public void putRef(Object o) {
+        ServiceFactory.getInstance().getHandlerMap().put(interfaceName, o);
     }
 
     /**

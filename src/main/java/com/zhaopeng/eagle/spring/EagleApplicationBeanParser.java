@@ -21,7 +21,7 @@ public class EagleApplicationBeanParser implements BeanDefinitionParser {
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
         beanDefinition.setBeanClass(EagleApplicationBean.class);
         beanDefinition.setLazyInit(false);
-        beanDefinition.setInitMethodName("init");
+       // beanDefinition.setInitMethodName("init");
         beanDefinition.getPropertyValues().addPropertyValue("port", port);
         beanDefinition.getPropertyValues().addPropertyValue("protocol", protocol);
         beanDefinition.getPropertyValues().addPropertyValue("threads", threads);

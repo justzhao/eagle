@@ -2,6 +2,7 @@ package com.zhaopeng.eagle.spring;
 
 import com.zhaopeng.eagle.util.AsyncTaskSubmitUtil;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -12,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by zhaopeng on 2016/11/19.
  */
-public class EagleApplicationBean implements DisposableBean {
+public class EagleApplicationBean implements DisposableBean,InitializingBean {
 
     private int port;
 
@@ -24,18 +25,16 @@ public class EagleApplicationBean implements DisposableBean {
 
     private ExecutorService executor;
 
-    public void init() {
+
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
         executor = new ThreadPoolExecutor(threads, threads, 600l, TimeUnit.SECONDS,
                 new ArrayBlockingQueue<Runnable>(65536));
 
         AsyncTaskSubmitUtil taskSubmitUtil=   AsyncTaskSubmitUtil.newThreadPoolInstance();
         taskSubmitUtil.setExecutorService(executor);
-      //  ServiceFactory.getInstance().getSetsMap().put("executor",executor);
-       // ServiceFactory.getInstance().getSetsMap().put("accepts",accepts);
-       // ServiceFactory instance = ServiceFactory.getInstance();
-       // instance.serverStart();
     }
-
 
     public int getPort() {
         return port;
