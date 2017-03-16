@@ -1,4 +1,4 @@
-package com.zhaopeng.demo.annotation;
+package com.zhaopeng.demo.provider.annotation;
 
 import com.zhaopeng.demo.api.StoreService;
 import com.zhaopeng.eagle.annotation.Service;

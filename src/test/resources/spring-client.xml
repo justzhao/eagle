@@ -9,7 +9,8 @@
 
     <eagle:application port="8080" protocol="eagle" accepts="20"></eagle:application>
     <eagle:registry address="127.0.0.1:2181"></eagle:registry>
-    <eagle:reference id="storeService" interface="com.zhaopeng.demo.api.StoreService"></eagle:reference>
-
+   <!-- <eagle:reference id="storeService" interface="com.zhaopeng.demo.api.StoreService"></eagle:reference>
+-->
+    <eagle:annotation package="com.zhaopeng.demo.consumer.annotation"/>
 
 </beans>

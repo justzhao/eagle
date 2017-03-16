@@ -198,8 +198,7 @@ public class AnnotationBean implements DisposableBean, BeanFactoryPostProcessor,
         referenceBean.setTimeout(reference.timeout());
         referenceBean.setApplicationContext(applicationContext);
         referenceBean.checkConfig();
-
-
+        referenceBean.refer();
         try {
             Object o = referenceBean.getObject();
             return o;
