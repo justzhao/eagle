@@ -1,8 +1,8 @@
 package com.zhaopeng.eagle.annotation;
 
 import com.zhaopeng.eagle.common.Constants;
+import com.zhaopeng.eagle.spring.EagleReferenceBean;
 import com.zhaopeng.eagle.spring.EagleServiceBean;
-import com.zhaopeng.eagle.spring.config.AbstractConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -16,6 +16,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
+import java.lang.reflect.Field;
+
 /**
  * Created by zhaopeng on 2017/3/13.
  * <p>
@@ -25,7 +27,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
  * 1）bean实现了InitializingBean接口，对应的方法为afterPropertiesSet
  * 2）在bean定义的时候，通过init-method设置的方法
  */
-public class AnnotationBean extends AbstractConfig implements DisposableBean, BeanFactoryPostProcessor, BeanPostProcessor, ApplicationContextAware {
+public class AnnotationBean implements DisposableBean, BeanFactoryPostProcessor, BeanPostProcessor, ApplicationContextAware {
 
 
     private final static Logger logger = LoggerFactory.getLogger(AnnotationBean.class);
@@ -92,6 +94,34 @@ public class AnnotationBean extends AbstractConfig implements DisposableBean, Be
      */
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        if (!isMatchPackage(bean)) {
+            return bean;
+        }
+
+        /**
+         * 获取某个bean中使用Retention 注解的 field，然后设置成invoker代理类
+         */
+
+        Field[] fields = bean.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                if (!field.isAccessible()) {
+                    field.setAccessible(true);
+                }
+                // 如果使用了这个注解类的成员就开始引用服务
+                Reference reference = field.getAnnotation(Reference.class);
+                if (reference != null) {
+                    Object value = refer(reference, field.getType());
+                    if (value != null) {
+                        field.set(bean, value);
+                    }
+                }
+            } catch (Throwable e) {
+                logger.error("Failed to init remote service reference at filed " + field.getName() + " in class " + bean.getClass().getName() + ", cause: " + e.getMessage(), e);
+            }
+        }
+
+
         return bean;
     }
 
@@ -111,9 +141,7 @@ public class AnnotationBean extends AbstractConfig implements DisposableBean, Be
         }
         // 在此处暴露服务的。
         Service service = bean.getClass().getAnnotation(Service.class);
-
         if (service != null) {
-
             EagleServiceBean serviceBean = new EagleServiceBean();
             if (void.class.equals(service.interfaceClass())
                     && "".equals(service.interfaceName())) {
@@ -122,11 +150,8 @@ public class AnnotationBean extends AbstractConfig implements DisposableBean, Be
                 }
                 serviceBean.setInterfaceName(bean.getClass().getInterfaces()[0].getName());
             }
-
             serviceBean.setApplicationContext(applicationContext);
-
             serviceBean.checkConfig();
-
             serviceBean.export();
             serviceBean.putRef(bean);
 
@@ -137,7 +162,6 @@ public class AnnotationBean extends AbstractConfig implements DisposableBean, Be
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-
         this.applicationContext = applicationContext;
     }
 
@@ -158,5 +182,30 @@ public class AnnotationBean extends AbstractConfig implements DisposableBean, Be
             }
         }
         return false;
+    }
+
+    /**
+     * 引用服务
+     * @param reference
+     * @param referenceClass
+     * @return
+     */
+    private Object refer(Reference reference, Class<?> referenceClass) {
+
+        EagleReferenceBean referenceBean = new EagleReferenceBean();
+        referenceBean.setInterfaceName(referenceClass.getName());
+        referenceBean.setRetries(reference.retries());
+        referenceBean.setTimeout(reference.timeout());
+        referenceBean.setApplicationContext(applicationContext);
+        referenceBean.checkConfig();
+
+
+        try {
+            Object o = referenceBean.getObject();
+            return o;
+        } catch (Exception e) {
+            logger.error("Reference 注解失败 {}", e);
+        }
+        return  null;
     }
 }

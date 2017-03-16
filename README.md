@@ -9,12 +9,13 @@
  - 客户端启动的时缓存服务端的信息,实现服务订阅
  - 客户端监听服务端节点,服务端宕机或者停止服务后，客户端能感知。
  - 心跳检测，定时检测prvider 服务是否还存在
-
- ### todo
  - 注解方式，启动服务。
 
-### 例子
+ ### todo
+ - 注解方式，调用服务。
 
+## 例子
+### xml配置
 #### 服务端
          <bean id="storeService"  class="com.zhaopeng.demo.provider.StoreServiceImpl" scope="prototype"></bean>
          <eagle:registry address="127.0.0.1:2181"></eagle:registry>
@@ -27,6 +28,7 @@
         <eagle:registry address="127.0.0.1:2181"></eagle:registry>
         <eagle:reference id="storeService" interface="com.zhaopeng.demo.api.StoreService"></eagle:reference>
 
+### 注解
 
 
 

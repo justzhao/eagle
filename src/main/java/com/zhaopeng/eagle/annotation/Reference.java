@@ -8,8 +8,16 @@ import java.lang.annotation.*;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD})
 public @interface Reference {
+
+    int  timeout() default 5000;
+
+    int retries() default 3;
+
+    String interfaceName() default "";
+
+    String id() default "";
 
 
 }

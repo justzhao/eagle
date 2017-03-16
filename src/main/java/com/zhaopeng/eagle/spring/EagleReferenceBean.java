@@ -51,8 +51,7 @@ public class EagleReferenceBean extends AbstractConfig implements FactoryBean, A
 
     @Override
     public Object getObject() throws Exception {
-        // 返回对应的代理类吧。
-
+        // 返回对应的代理类
         return this.obj;
     }
 
