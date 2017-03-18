@@ -12,8 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Serialization Util（Based on Protostuff）
- * @author huangyong
+ *
  */
 public class ProtostuffUtil {
 

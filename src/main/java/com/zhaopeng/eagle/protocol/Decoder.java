@@ -23,18 +23,13 @@ public class Decoder extends ByteToMessageDecoder {
         }
         in.markReaderIndex();
         int dataLength = in.readInt();
-        /*if (dataLength <= 0) {
-            ctx.close();
-        }*/
         if (in.readableBytes() < dataLength) {
             in.resetReaderIndex();
             return;
         }
         byte[] data = new byte[dataLength];
         in.readBytes(data);
-
         Object obj = ProtostuffUtil.deserialize(data, genericClass);
-        //Object obj = JsonUtil.deserialize(data,genericClass); // Not use this, have some bugs
         out.add(obj);
     }
 }
