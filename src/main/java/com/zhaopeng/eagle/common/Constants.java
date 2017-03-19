@@ -28,4 +28,8 @@ public class Constants {
             .compile("\\s*[,]+\\s*");
 
 
+    public static int DEFAULT_TIME_OUT = 3000;
+
+    public static int DEFAULT_RETRIES = 3;
+
 }

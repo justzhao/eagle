@@ -147,6 +147,7 @@ public class ZookeeperRegistry extends AbstractRegistry<IZkChildListener> {
      */
     public void createEphemeral(String path) {
 
+        if(client.exists(path)) return;
         // 创建临时节点
         client.createEphemeral(path);
 

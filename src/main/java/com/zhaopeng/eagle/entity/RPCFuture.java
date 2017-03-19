@@ -55,7 +55,7 @@ public class RPCFuture implements Future<Object> {
             if (response == null) {
                 condition.await(timeout, TimeUnit.MILLISECONDS);
             }
-            return response.getResult();
+            return  response!=null? response.getResult():null;
         } finally {
             lock.unlock();
         }

@@ -63,14 +63,20 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
         if (invoker == null) {
             initInvoker();
         }
-        int retries = url.getParameter(Constants.RETRIES, 3);
+        int retries = url.getParameter(Constants.RETRIES, Constants.DEFAULT_RETRIES);
         InvokerServiceHandler handler = invoker.getInvokerServiceHandler();
         while (retries > 0) {
             RPCFuture future = handler.sendRequest(request);
-            if (future.get() != null) {
+            if(future==null||future.get()==null){
+                logger.error("time out for {} ms  and try {}",url.getParameter(Constants.TIME_OUT,Constants.DEFAULT_TIME_OUT),retries);
+                retries--;
+                continue;
+            }
+
+            if ( future.get() != null) {
                 return future.get();
             }
-            retries--;
+
         }
         return null;
     }

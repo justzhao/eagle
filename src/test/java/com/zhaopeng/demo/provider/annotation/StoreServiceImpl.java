@@ -12,6 +12,11 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public String getAllStore(String input) {
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return "the store id is "+input;
     }
 }
