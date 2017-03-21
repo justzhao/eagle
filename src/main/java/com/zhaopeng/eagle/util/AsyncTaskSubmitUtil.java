@@ -19,9 +19,6 @@ public class AsyncTaskSubmitUtil {
 
     private static class SingletonHolder {
         private static final AsyncTaskSubmitUtil INSTANCE = new AsyncTaskSubmitUtil();
-        //(16, 16, 600L, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(65536));
-
-
     }
 
     public static AsyncTaskSubmitUtil newThreadPoolInstance() {

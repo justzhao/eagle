@@ -6,12 +6,13 @@ import com.zhaopeng.eagle.registry.config.RegistryConfig;
 import org.I0Itec.zkclient.IZkChildListener;
 import org.I0Itec.zkclient.IZkStateListener;
 import org.I0Itec.zkclient.ZkClient;
-import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -38,17 +39,29 @@ public class ZookeeperRegistry extends AbstractRegistry<IZkChildListener> {
     private final ConcurrentMap<URL, ConcurrentMap<ChildListener, IZkChildListener>> zkListeners = new ConcurrentHashMap<>();
 
 
-    public ZookeeperRegistry(RegistryConfig registryConfig) {
 
-        // this.zookeeper = new ZooKeeper(registryConfig.getAddress(), ZookeeperConstant.TIME_OUT, new ZookeeperWatch());
+    public ZookeeperRegistry(RegistryConfig registryConfig) {
         client = new ZkClient(registryConfig.getAddress());
+        addStateListener(new StateListener() {
+            public void stateChanged(int state) {
+                if (state == RECONNECTED) {
+                    try {
+                        recover();
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
+                    }
+                }
+            }
+        });
         client.subscribeStateChanges(new IZkStateListener() {
             public void handleStateChanged(Watcher.Event.KeeperState state) throws Exception {
                 ZookeeperRegistry.this.state = state;
                 if (state == Watcher.Event.KeeperState.Disconnected) {
+                    logger.info("zk 连接 失效了");
                     stateChanged(StateListener.DISCONNECTED);
                 } else if (state == Watcher.Event.KeeperState.SyncConnected) {
                     //重新连接的话需要重新注册节点
+                    logger.info("zk 重新连接了");
                     stateChanged(StateListener.CONNECTED);
                 }
             }
@@ -61,13 +74,19 @@ public class ZookeeperRegistry extends AbstractRegistry<IZkChildListener> {
 
     }
 
-    class ZookeeperWatch implements Watcher {
 
-        @Override
-        public void process(WatchedEvent event) {
-
+    /**
+     * 连接恢复
+     */
+    public void recover() {
+        // 重新连接之后，重新注册
+        Set<String> recoverRegistered = new HashSet<>(registered);
+        for(String register :recoverRegistered){
+            create(register, true);
         }
     }
+
+
 
     @Override
     public void register(URL url) {
@@ -147,7 +166,7 @@ public class ZookeeperRegistry extends AbstractRegistry<IZkChildListener> {
      */
     public void createEphemeral(String path) {
 
-        if(client.exists(path)) return;
+        if (client.exists(path)) return;
         // 创建临时节点
         client.createEphemeral(path);
 

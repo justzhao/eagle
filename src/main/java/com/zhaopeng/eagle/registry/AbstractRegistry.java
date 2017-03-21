@@ -1,9 +1,13 @@
 package com.zhaopeng.eagle.registry;
 
 import com.zhaopeng.eagle.entity.URL;
+import com.zhaopeng.eagle.registry.zookeeper.StateListener;
+import com.zhaopeng.eagle.util.ConcurrentHashSet;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * 服务的注册和发现
@@ -18,6 +22,14 @@ public abstract class AbstractRegistry<TargetChildListener> implements Registry 
     private static final String URL_SPLIT = "\\s+";
 
     private URL registryUrl;
+
+    // 已经注册的服务连接
+    protected final Set<String> registered = new ConcurrentHashSet<>();
+
+    /**
+     * zk连接状态监听
+     */
+    private final Set<StateListener> stateListeners = new CopyOnWriteArraySet<>();
 
     // 本地磁盘缓存文件
     private File file;
@@ -44,7 +56,7 @@ public abstract class AbstractRegistry<TargetChildListener> implements Registry 
      * @param url
      */
     public void register(URL url){
-
+        registered.add(url.toString());
     }
 
     /**
@@ -58,10 +70,25 @@ public abstract class AbstractRegistry<TargetChildListener> implements Registry 
 
 
     /**
-     * 节点状态变化
+     * 连接状态变化
      * @param state
      */
     protected void stateChanged(int state) {
+        for (StateListener sessionListener : getSessionListeners()) {
+            sessionListener.stateChanged(state);
+        }
+    }
 
+
+    public void addStateListener(StateListener listener) {
+        stateListeners.add(listener);
+    }
+
+    public void removeStateListener(StateListener listener) {
+        stateListeners.remove(listener);
+    }
+
+    public Set<StateListener> getSessionListeners() {
+        return stateListeners;
     }
 }
