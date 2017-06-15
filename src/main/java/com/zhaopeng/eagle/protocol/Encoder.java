@@ -13,7 +13,6 @@ public class Encoder extends MessageToByteEncoder {
     public Encoder(Class<?> genericClass) {
         this.genericClass = genericClass;
     }
-
     @Override
     public void encode(ChannelHandlerContext ctx, Object in, ByteBuf out) throws Exception {
         if (genericClass.isInstance(in)) {

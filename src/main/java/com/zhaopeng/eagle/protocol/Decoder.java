@@ -15,7 +15,6 @@ public class Decoder extends ByteToMessageDecoder {
     public Decoder(Class<?> genericClass) {
         this.genericClass = genericClass;
     }
-
     @Override
     public final void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         if (in.readableBytes() < 4) {
