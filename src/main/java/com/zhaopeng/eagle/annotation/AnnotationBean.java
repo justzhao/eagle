@@ -70,7 +70,7 @@ public class AnnotationBean implements DisposableBean, BeanFactoryPostProcessor,
             // 用来浏览类路径
             ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner((BeanDefinitionRegistry) beanFactory);
 
-            // 指定类型
+            // 指定类型，扫描 到家了注解Service的类，包装成BeanDefination等待实例化
             AnnotationTypeFilter filter = new AnnotationTypeFilter(Service.class);
 
             // 浏览需要包括制定的注解类型
