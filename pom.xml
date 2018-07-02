@@ -5,7 +5,13 @@
     <groupId>com.zhaopeng</groupId>
     <artifactId>eagle</artifactId>
     <version>${project.version}</version>
-    <packaging>jar</packaging>
+    <modules>
+        <module>eagle-remote</module>
+        <module>eagle-spring</module>
+        <module>eagle-registry</module>
+        <module>eagle-common</module>
+    </modules>
+    <packaging>pom</packaging>
 
     <name>eagle</name>
     <url>http://maven.apache.org</url>
