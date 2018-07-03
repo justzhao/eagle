@@ -31,9 +31,7 @@ public class EagleServiceBean extends AbstractConfig implements ApplicationConte
 
     private volatile boolean isExported;
 
-    public void init() {
 
-    }
 
 
     public String getInterfaceName() {
