@@ -25,6 +25,18 @@ public class ApplicationBean {
      */
     private int accepts;
 
+    /**
+     * 注册中心的地址
+     */
+    private String registerUrl;
+
+    /**
+     * 应用名称
+     */
+    private String applicationName;
+
+
+
     public int getPort() {
         return port;
     }
@@ -55,5 +67,22 @@ public class ApplicationBean {
 
     public void setAccepts(int accepts) {
         this.accepts = accepts;
+    }
+
+
+    public String getRegisterUrl() {
+        return registerUrl;
+    }
+
+    public void setRegisterUrl(String registerUrl) {
+        this.registerUrl = registerUrl;
+    }
+
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
     }
 }
