@@ -20,6 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.version>1.0.0</project.version>
         <spring.version>4.3.4.RELEASE</spring.version>
+        <curator.version>2.12.0</curator.version>
     </properties>
 
 
@@ -68,6 +69,12 @@
                 <groupId>cglib</groupId>
                 <artifactId>cglib</artifactId>
                 <version>3.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-framework</artifactId>
+                <version>${curator.version}</version>
             </dependency>
             <!--   <dependency>
                    <groupId>org.apache.zookeeper</groupId>

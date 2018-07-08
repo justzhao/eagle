@@ -23,6 +23,11 @@ public class Url {
 
     private String str;
 
+    /**
+     * 注册地址
+     */
+    private String registerAddress;
+
 
     private Map<String, String> parameters;
 
@@ -80,5 +85,13 @@ public class Url {
 
     public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
+    }
+
+    public String getRegisterAddress() {
+        return registerAddress;
+    }
+
+    public void setRegisterAddress(String registerAddress) {
+        this.registerAddress = registerAddress;
     }
 }
