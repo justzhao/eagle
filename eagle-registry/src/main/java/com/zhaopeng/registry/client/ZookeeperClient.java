@@ -1,6 +1,5 @@
 package com.zhaopeng.registry.client;
 
-import com.zhaopeng.common.bean.Url;
 import com.zhaopeng.registry.listener.ChildListener;
 import com.zhaopeng.registry.listener.StateListener;
 
@@ -29,5 +28,5 @@ public interface ZookeeperClient {
 
     void close();
 
-    Url getUrl();
+    String getUrl();
 }

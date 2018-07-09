@@ -1,6 +1,9 @@
 package com.zhaopeng.spring.bean;
 
 import com.google.common.base.Strings;
+import com.zhaopeng.common.bean.Url;
+import com.zhaopeng.registry.Registry;
+import com.zhaopeng.registry.factory.ZookeeperClientFactory;
 import com.zhaopeng.spring.config.AbstractConfig;
 import com.zhaopeng.spring.holder.ServiceHolder;
 import org.slf4j.Logger;
@@ -47,25 +50,37 @@ public class ServiceBean<T> extends AbstractConfig implements ApplicationContext
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * 检查配置文件的正确性
+     */
     private void checkConfig() {
+
 
 
     }
 
     private void register() {
-
         ApplicationBean applicationBean = applicationContext.getBean(ApplicationBean.class);
 
-        if(Strings.isNullOrEmpty(applicationBean.getRegisterUrl())){
-          throw  new IllegalStateException("<application:service registerUrl=\"\" /> registerUrl not allow null!");
+        if (Strings.isNullOrEmpty(applicationBean.getRegisterUrl())) {
+            throw new IllegalStateException("<application:service registerUrl=\"\" /> registerUrl not allow null!");
         }
-
         /**
          * 调用注册
          */
+        Registry registry = ZookeeperClientFactory.getRegistry(applicationBean.getRegisterUrl());
+        Url url = buildUrl(applicationBean);
+        registry.registerUrl(url);
+    }
 
+    private Url buildUrl(ApplicationBean applicationBean ) {
 
-
+        Url url = new Url();
+        url.setInterfaceName(interfaceName);
+        url.setPort(applicationBean.getPort());
+        url.setProtocol(applicationBean.getProtocol());
+        url.setType("provider");
+        return url;
     }
 
     private void export() {

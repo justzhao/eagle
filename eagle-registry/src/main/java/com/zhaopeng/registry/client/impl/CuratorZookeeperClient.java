@@ -1,7 +1,6 @@
 package com.zhaopeng.registry.client.impl;
 
 import com.google.common.base.Strings;
-import com.zhaopeng.common.bean.Url;
 import com.zhaopeng.registry.client.ZookeeperClient;
 import com.zhaopeng.registry.listener.ChildListener;
 import com.zhaopeng.registry.listener.StateListener;
@@ -38,18 +37,19 @@ public class CuratorZookeeperClient implements ZookeeperClient {
      */
     private final CuratorFramework client;
 
-    private Url url;
+    private String url;
 
-    public CuratorZookeeperClient(Url url) {
+    public CuratorZookeeperClient(String url) {
         try {
             this.url = url;
             CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
-                    .connectString(url.getRegisterAddress())
+                    .connectString(url)
                     .retryPolicy(new RetryNTimes(1, 1000))
                     .connectionTimeoutMs(5000);
 
             client = builder.build();
             client.getConnectionStateListenable().addListener(new ConnectionStateListener() {
+                @Override
                 public void stateChanged(CuratorFramework client, ConnectionState state) {
                     if (state == ConnectionState.LOST) {
                         CuratorZookeeperClient.this.stateChanged(StateListener.DISCONNECTED);
@@ -189,7 +189,7 @@ public class CuratorZookeeperClient implements ZookeeperClient {
     }
 
     @Override
-    public Url getUrl() {
+    public String getUrl() {
         return url;
     }
 
@@ -209,13 +209,11 @@ public class CuratorZookeeperClient implements ZookeeperClient {
             this.listener = null;
         }
 
+        @Override
         public void process(WatchedEvent event) throws Exception {
             if (listener != null) {
                 String path = event.getPath() == null ? "" : event.getPath();
                 listener.childChanged(path,
-                        // if path is null, curator using watcher will throw NullPointerException.
-                        // if client connect or disconnect to server, zookeeper will queue
-                        // watched event(Watcher.Event.EventType.None, .., path = null).
                         !Strings.isNullOrEmpty(path)
                                 ? client.getChildren().usingWatcher(this).forPath(path)
                                 : Collections.<String>emptyList());

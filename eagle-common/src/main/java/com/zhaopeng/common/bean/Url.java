@@ -1,6 +1,7 @@
 package com.zhaopeng.common.bean;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by zhaopeng on 2018/7/6.
@@ -93,5 +94,56 @@ public class Url {
 
     public void setRegisterAddress(String registerAddress) {
         this.registerAddress = registerAddress;
+    }
+
+    public String getRegisterUrl(){
+
+        return "";
+    }
+
+
+    private String buildUrlString() throws Exception {
+        StringBuilder buf = new StringBuilder();
+        if (protocol != null && protocol.length() > 0) {
+            buf.append("/");
+            buf.append(protocol);
+            buf.append("/");
+        }
+        if (interfaceName == null) {
+            throw new Exception("interfaceName is null");
+        }
+        buf.append(interfaceName);
+        buf.append("/");
+        buf.append(type);
+        String host = getHost();
+        if (host != null && host.length() > 0) {
+            buf.append("/");
+            buf.append(host);
+            if (port > 0) {
+                buf.append(":");
+                buf.append(port);
+            }
+        }
+        buildParameters(buf);
+        return buf.toString();
+    }
+
+    private void buildParameters(StringBuilder buf) {
+        if (getParameters() != null && getParameters().size() > 0) {
+            boolean first = true;
+            for (Map.Entry<String, String> entry : new TreeMap<>(getParameters()).entrySet()) {
+                if (entry.getKey() != null && entry.getKey().length() > 0) {
+                    if (first) {
+                        buf.append("?");
+                        first = false;
+                    } else {
+                        buf.append("&");
+                    }
+                    buf.append(entry.getKey());
+                    buf.append("=");
+                    buf.append(entry.getValue() == null ? "" : entry.getValue().trim());
+                }
+            }
+        }
     }
 }

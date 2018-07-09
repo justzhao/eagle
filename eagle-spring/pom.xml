@@ -40,10 +40,10 @@
         </dependency>
 
         <dependency>
-            <groupId>com.zhaopeng</groupId>
-            <artifactId>eagle-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <groupId>com.zhaopeng</groupId>
+        <artifactId>eagle-registry</artifactId>
+        <version>${project.version}</version>
+    </dependency>
 
     </dependencies>
 
