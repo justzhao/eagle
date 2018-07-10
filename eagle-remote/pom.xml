@@ -9,9 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>eagele-remote</artifactId>
+    <artifactId>eagle-remote</artifactId>
 
-    <name>eagele-remote</name>
+    <name>eagle-remote</name>
     <!-- FIXME change it to the project's website -->
     <url>http://www.example.com</url>
 
@@ -46,6 +46,11 @@
         <dependency>
             <groupId>com.dyuproject.protostuff</groupId>
             <artifactId>protostuff-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zhaopeng</groupId>
+            <artifactId>eagle-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

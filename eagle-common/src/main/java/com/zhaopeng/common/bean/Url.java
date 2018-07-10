@@ -1,5 +1,7 @@
 package com.zhaopeng.common.bean;
 
+import com.zhaopeng.common.Constants;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -21,6 +23,8 @@ public class Url {
     // 是消费者还是提供者
     private String type;
 
+
+    private int threads;
 
     private String str;
 
@@ -96,11 +100,18 @@ public class Url {
         this.registerAddress = registerAddress;
     }
 
-    public String getRegisterUrl(){
+    public String getRegisterUrl() {
 
         return "";
     }
 
+    public int getThreads() {
+        return threads;
+    }
+
+    public void setThreads(int threads) {
+        this.threads = threads;
+    }
 
     private String buildUrlString() throws Exception {
         StringBuilder buf = new StringBuilder();
@@ -146,4 +157,40 @@ public class Url {
             }
         }
     }
+
+
+    public String getParameter(String key) {
+        String value = parameters.get(key);
+        if (value == null || value.length() == 0) {
+            value = parameters.get(Constants.DEFAULT_KEY_PREFIX + key);
+        }
+        return value;
+    }
+
+    public String getParameter(String key, String defaultValue) {
+        String value = getParameter(key);
+        if (value == null || value.length() == 0) {
+            return defaultValue;
+        }
+        return value;
+    }
+
+    public String[] getParameter(String key, String[] defaultValue) {
+        String value = getParameter(key);
+        if (value == null || value.length() == 0) {
+            return defaultValue;
+        }
+        return Constants.COMMA_SPLIT_PATTERN.split(value);
+    }
+
+    public int getParameter(String key, int defaultValue) {
+
+        String value = getParameter(key);
+        if (value == null || value.length() == 0) {
+            return defaultValue;
+        }
+        int i = Integer.parseInt(value);
+        return i;
+    }
+
 }
