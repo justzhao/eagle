@@ -13,7 +13,6 @@ public interface Server {
     public void send(Object message, boolean sent);
 
 
-    public void close();
 
 
 }

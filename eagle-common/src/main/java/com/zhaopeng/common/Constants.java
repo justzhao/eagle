@@ -22,6 +22,12 @@ public class Constants {
 
     public static final String IDLE_TIMEOUT_KEY = "idle.timeout";
 
+    public static final String IO_THREADS_KEY = "iothreads";
+
+    public static final int DEFAULT_IO_THREADS = Math.min(Runtime.getRuntime().availableProcessors() + 1, 32);
+
+
+
 
     public static final int DEFAULT_IDLE_TIMEOUT = 600 * 1000;
 
