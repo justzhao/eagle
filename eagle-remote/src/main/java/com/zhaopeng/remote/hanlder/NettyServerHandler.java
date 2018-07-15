@@ -15,18 +15,19 @@ public class NettyServerHandler extends ChannelDuplexHandler {
     private Url url;
 
 
+    private final NettyChannelHandler hander;
+
 
     // <ip:port, channel>
     private final Map<String, Channel> channels = new ConcurrentHashMap<>();
 
 
-
-
-    public NettyServerHandler(Url url) {
+    public NettyServerHandler(Url url, NettyChannelHandler channelHandler) {
         if (url == null) {
             throw new IllegalArgumentException("url == null");
         }
 
+        this.hander = channelHandler;
         this.url = url;
     }
 
@@ -54,6 +55,11 @@ public class NettyServerHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+
+        //接收到消息
+
+        hander.received(ctx.channel(), msg);
+
 
     }
 

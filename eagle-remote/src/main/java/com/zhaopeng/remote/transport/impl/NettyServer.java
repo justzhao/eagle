@@ -7,6 +7,7 @@ import com.zhaopeng.remote.codec.Decoder;
 import com.zhaopeng.remote.codec.Encoder;
 import com.zhaopeng.remote.entity.Request;
 import com.zhaopeng.remote.entity.Response;
+import com.zhaopeng.remote.hanlder.NettyChannelHandler;
 import com.zhaopeng.remote.hanlder.NettyServerHandler;
 import com.zhaopeng.remote.transport.Server;
 import io.netty.bootstrap.ServerBootstrap;
@@ -21,10 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by zhaopeng on 2018/7/10.
@@ -34,7 +31,7 @@ public class NettyServer implements Server {
 
     protected static final String SERVER_THREAD_POOL_NAME = "DubboServerHandler";
     private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
-    ExecutorService executor;
+
     private InetSocketAddress localAddress;
     private InetSocketAddress bindAddress;
     private int accepts;
@@ -74,7 +71,6 @@ public class NettyServer implements Server {
                     + " on " + bindIp + ", cause: " + t.getMessage(), t);
         }
 
-        executor = new ThreadPoolExecutor(Constants.THREAD_POOL_CORE_SIZE, url.getThreads(), Constants.THREAD_POOL_ALIVE_TIME, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(Constants.THREAD_POOL_QUEUE_SIZE));
 
     }
 
@@ -89,7 +85,7 @@ public class NettyServer implements Server {
         workerGroup = new NioEventLoopGroup(getUrl().getPositiveParameter(Constants.IO_THREADS_KEY, Constants.DEFAULT_IO_THREADS),
                 new DefaultThreadFactory("NettyServerWorker", true));
 
-        final NettyServerHandler nettyServerHandler = new NettyServerHandler(getUrl());
+        final NettyServerHandler nettyServerHandler = new NettyServerHandler(getUrl(), new NettyChannelHandler(url));
         channels = nettyServerHandler.getChannels();
 
         bootstrap.group(bossGroup, workerGroup)
@@ -101,7 +97,7 @@ public class NettyServer implements Server {
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
 
-                        ch.pipeline().addLast("decoder",new Decoder(Request.class))
+                        ch.pipeline().addLast("decoder", new Decoder(Request.class))
                                 .addLast("encoder", new Encoder(Response.class))
                                 .addLast("handler", nettyServerHandler);
                     }
@@ -120,8 +116,6 @@ public class NettyServer implements Server {
          */
 
     }
-
-
 
 
     @Override
@@ -151,9 +145,6 @@ public class NettyServer implements Server {
             logger.warn(e.getMessage(), e);
         }
     }
-
-
-
 
 
     public boolean isBound() {
