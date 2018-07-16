@@ -16,7 +16,9 @@ public class Request {
     // 参数
     private Object[] parameters;
 
-    public  boolean heartEvent=false;
+    public boolean heartEvent = false;
+
+    public boolean twoWay = true;
 
     public String getRequestId() {
         return requestId;
@@ -64,5 +66,13 @@ public class Request {
 
     public void setHeartEvent(boolean heartEvent) {
         this.heartEvent = heartEvent;
+    }
+
+    public boolean isTwoWay() {
+        return twoWay;
+    }
+
+    public void setTwoWay(boolean twoWay) {
+        this.twoWay = twoWay;
     }
 }

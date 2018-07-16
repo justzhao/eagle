@@ -14,11 +14,6 @@ public abstract class AbstractConfig {
 
     protected String id;
 
-/*    protected List<RegistryConfig> registries = new ArrayList<>();
-
-    protected URL url;
-
-    protected Registry registry;*/
 
     protected String interfaceName;
 

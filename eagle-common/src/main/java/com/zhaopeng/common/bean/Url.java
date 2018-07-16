@@ -26,7 +26,6 @@ public class Url {
 
     private int threads;
 
-    private String str;
 
     /**
      * 注册地址
@@ -35,6 +34,9 @@ public class Url {
 
 
     private Map<String, String> parameters;
+
+
+    private int timeOut;
 
     public String getProtocol() {
         return protocol;
@@ -76,14 +78,6 @@ public class Url {
         this.type = type;
     }
 
-    public String getStr() {
-        return str;
-    }
-
-    public void setStr(String str) {
-        this.str = str;
-    }
-
     public Map<String, String> getParameters() {
         return parameters;
     }
@@ -113,16 +107,14 @@ public class Url {
         this.threads = threads;
     }
 
-    private String buildUrlString() throws Exception {
+    public String buildUrlString() {
         StringBuilder buf = new StringBuilder();
         if (protocol != null && protocol.length() > 0) {
             buf.append("/");
             buf.append(protocol);
             buf.append("/");
         }
-        if (interfaceName == null) {
-            throw new Exception("interfaceName is null");
-        }
+
         buf.append(interfaceName);
         buf.append("/");
         buf.append(type);
@@ -204,4 +196,11 @@ public class Url {
         return value;
     }
 
+    public int getTimeOut() {
+        return timeOut;
+    }
+
+    public void setTimeOut(int timeOut) {
+        this.timeOut = timeOut;
+    }
 }

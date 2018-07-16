@@ -19,7 +19,6 @@ public class ZookeeperRegistry implements Registry {
     @Override
     public void registerUrl(Url url) {
 
-
-        zookeeperClient.create(url.getRegisterUrl(),true);
+        zookeeperClient.create(url.buildUrlString(), true);
     }
 }

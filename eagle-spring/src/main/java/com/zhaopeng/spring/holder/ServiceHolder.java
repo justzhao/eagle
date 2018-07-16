@@ -19,4 +19,9 @@ public class ServiceHolder {
     }
 
 
+    public static Object getService(String serviceName){
+
+        return providedServices.get(serviceName);
+    }
+
 }

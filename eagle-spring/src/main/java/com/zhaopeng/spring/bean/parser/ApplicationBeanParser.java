@@ -20,12 +20,16 @@ public class ApplicationBeanParser implements BeanDefinitionParser {
         String protocol = element.getAttribute("protocol");
         String threads = element.getAttribute("threads");
         String accepts = element.getAttribute("accepts");
+        String registerUrl = element.getAttribute("registerUrl");
+        String applicationName = element.getAttribute("applicationName");
         beanDefinition.setBeanClass(ApplicationBean.class);
         beanDefinition.setLazyInit(false);
         beanDefinition.getPropertyValues().addPropertyValue("port", port);
         beanDefinition.getPropertyValues().addPropertyValue("protocol", protocol);
         beanDefinition.getPropertyValues().addPropertyValue("threads", threads);
         beanDefinition.getPropertyValues().addPropertyValue("accepts", accepts);
+        beanDefinition.getPropertyValues().addPropertyValue("registerUrl", registerUrl);
+        beanDefinition.getPropertyValues().addPropertyValue("applicationName", applicationName);
         parserContext.getRegistry().registerBeanDefinition("eagle", beanDefinition);
         return beanDefinition;
     }
