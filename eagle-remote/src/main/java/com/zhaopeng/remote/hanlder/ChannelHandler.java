@@ -1,10 +1,13 @@
 package com.zhaopeng.remote.hanlder;
 
 import com.zhaopeng.common.exception.RemotingException;
+import com.zhaopeng.remote.dispacher.DefaultFuture;
 import com.zhaopeng.remote.entity.Request;
 import com.zhaopeng.remote.entity.Response;
 import com.zhaopeng.spring.holder.ServiceHolder;
 import io.netty.channel.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cglib.reflect.FastClass;
 import org.springframework.cglib.reflect.FastMethod;
 
@@ -16,6 +19,8 @@ import java.lang.reflect.InvocationTargetException;
 public class ChannelHandler {
 
 
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     public void connected(Channel channel) throws RemotingException {
     }
 
@@ -25,11 +30,13 @@ public class ChannelHandler {
 
     public void sent(Channel channel, Object message) throws RemotingException {
 
+        if (message instanceof Request) {
+            new DefaultFuture(channel, (Request) message, 0);
+            channel.writeAndFlush(message);
 
-        Request request = new Request();
-
-        channel.writeAndFlush(request);
-
+        } else {
+            logger.error("not request {}",message);
+        }
 
     }
 
@@ -40,14 +47,12 @@ public class ChannelHandler {
             // handle request.
             Request request = (Request) message;
             if (request.isHeartEvent()) {
-
                 Response response = new Response(request.getRequestId());
                 channel.writeAndFlush(response);
             } else {
                 if (request.isTwoWay()) {
                     Response response = new Response(request.getRequestId());
                     try {
-
                         response.setResult(handle(request));
                     } catch (Throwable throwable) {
 
@@ -77,8 +82,6 @@ public class ChannelHandler {
         FastMethod serviceFastMethod = serviceFastClass.getMethod(methodName, parameterTypes);
         return serviceFastMethod.invoke(serviceBean, parameters);
     }
-
-
     public void handleResponse(Channel channel, Response response) {
 
     }
