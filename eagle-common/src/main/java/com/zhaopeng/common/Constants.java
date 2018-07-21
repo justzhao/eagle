@@ -24,6 +24,16 @@ public class Constants {
 
     public static final String IO_THREADS_KEY = "iothreads";
 
+
+    public static final String INTERFACE_KEY = "interface";
+
+    public static final String GROUP_KEY = "group";
+
+    public static final String VERSION_KEY = "version";
+
+    public static final String PATH_KEY = "path";
+
+
     public static final int DEFAULT_IO_THREADS = Math.min(Runtime.getRuntime().availableProcessors() + 1, 32);
 
 

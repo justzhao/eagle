@@ -8,13 +8,10 @@ public class Request {
     // 请求id
     private String requestId;
     // 类名字
-    private String className;
-    // 方法名字
-    private String methodName;
-    // 参数类型
-    private Class<?>[] parameterTypes;
-    // 参数
-    private Object[] parameters;
+    private Object data;
+
+    private String version;
+
 
     public boolean heartEvent = false;
 
@@ -28,36 +25,20 @@ public class Request {
         this.requestId = requestId;
     }
 
-    public String getClassName() {
-        return className;
+    public Object getData() {
+        return data;
     }
 
-    public void setClassName(String className) {
-        this.className = className;
+    public void setData(Object data) {
+        this.data = data;
     }
 
-    public String getMethodName() {
-        return methodName;
+    public String getVersion() {
+        return version;
     }
 
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
-    public Class<?>[] getParameterTypes() {
-        return parameterTypes;
-    }
-
-    public void setParameterTypes(Class<?>[] parameterTypes) {
-        this.parameterTypes = parameterTypes;
-    }
-
-    public Object[] getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(Object[] parameters) {
-        this.parameters = parameters;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public boolean isHeartEvent() {

@@ -4,12 +4,9 @@ import com.zhaopeng.common.exception.RemotingException;
 import com.zhaopeng.remote.dispacher.DefaultFuture;
 import com.zhaopeng.remote.entity.Request;
 import com.zhaopeng.remote.entity.Response;
-import com.zhaopeng.spring.holder.ServiceHolder;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cglib.reflect.FastClass;
-import org.springframework.cglib.reflect.FastMethod;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -35,7 +32,7 @@ public class ChannelHandler {
             channel.writeAndFlush(message);
 
         } else {
-            logger.error("not request {}",message);
+            logger.error("not request {}", message);
         }
 
     }
@@ -71,7 +68,7 @@ public class ChannelHandler {
     }
 
     private Object handle(Request request) throws InvocationTargetException {
-        String className = request.getClassName();
+/*        String className = request.getClassName();
         Object serviceBean = ServiceHolder.getService(className);
         Class<?> serviceClass = serviceBean.getClass();
         String methodName = request.getMethodName();
@@ -80,8 +77,11 @@ public class ChannelHandler {
 
         FastClass serviceFastClass = FastClass.create(serviceClass);
         FastMethod serviceFastMethod = serviceFastClass.getMethod(methodName, parameterTypes);
-        return serviceFastMethod.invoke(serviceBean, parameters);
+        return serviceFastMethod.invoke(serviceBean, parameters);*/
+
+        return null;
     }
+
     public void handleResponse(Channel channel, Response response) {
 
     }

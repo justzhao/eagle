@@ -23,6 +23,6 @@ public class TransportServer {
 
     public NettyClient connect(Url url) {
 
-        return new NettyClient();
+        return new NettyClient(url);
     }
 }

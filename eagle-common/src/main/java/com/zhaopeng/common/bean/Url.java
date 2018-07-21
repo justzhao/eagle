@@ -1,9 +1,10 @@
 package com.zhaopeng.common.bean;
 
 import com.zhaopeng.common.Constants;
+import com.zhaopeng.common.utils.NetUtils;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.net.InetSocketAddress;
+import java.util.*;
 
 /**
  * Created by zhaopeng on 2018/7/6.
@@ -37,6 +38,34 @@ public class Url {
 
 
     private int timeOut;
+
+    private final String path;
+
+
+    private String full;
+
+    private String ip;
+
+
+    public Url(String protocol, String host, int port, String path, Map<String, String> parameters) {
+
+        this.protocol = protocol;
+
+        this.host = host;
+        this.port = (port < 0 ? 0 : port);
+        // trim the beginning "/"
+        while (path != null && path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        this.path = path;
+        if (parameters == null) {
+            parameters = new HashMap<>();
+        } else {
+            parameters = new HashMap<>(parameters);
+        }
+        this.parameters = Collections.unmodifiableMap(parameters);
+    }
+
 
     public String getProtocol() {
         return protocol;
@@ -150,6 +179,30 @@ public class Url {
         }
     }
 
+    private void buildParameters(StringBuilder buf, boolean concat, String[] parameters) {
+        if (getParameters() != null && getParameters().size() > 0) {
+            List<String> includes = (parameters == null || parameters.length == 0 ? null : Arrays.asList(parameters));
+            boolean first = true;
+            for (Map.Entry<String, String> entry : new TreeMap<String, String>(getParameters()).entrySet()) {
+                if (entry.getKey() != null && entry.getKey().length() > 0
+                        && (includes == null || includes.contains(entry.getKey()))) {
+                    if (first) {
+                        if (concat) {
+                            buf.append("?");
+                        }
+                        first = false;
+                    } else {
+                        buf.append("&");
+                    }
+                    buf.append(entry.getKey());
+                    buf.append("=");
+                    buf.append(entry.getValue() == null ? "" : entry.getValue().trim());
+                }
+            }
+        }
+    }
+
+
 
     public String getParameter(String key) {
         String value = parameters.get(key);
@@ -202,5 +255,162 @@ public class Url {
 
     public void setTimeOut(int timeOut) {
         this.timeOut = timeOut;
+    }
+
+
+    public static Url valueOf(String url) {
+        if (url == null || (url = url.trim()).length() == 0) {
+            throw new IllegalArgumentException("url == null");
+        }
+        String protocol = null;
+
+        String host = null;
+        int port = 0;
+        String path = null;
+        Map<String, String> parameters = null;
+        int i = url.indexOf("?");
+        if (i >= 0) {
+            String[] parts = url.substring(i + 1).split("\\&");
+            parameters = new HashMap<String, String>();
+            for (String part : parts) {
+                part = part.trim();
+                if (part.length() > 0) {
+                    int j = part.indexOf('=');
+                    if (j >= 0) {
+                        parameters.put(part.substring(0, j), part.substring(j + 1));
+                    } else {
+                        parameters.put(part, part);
+                    }
+                }
+            }
+            url = url.substring(0, i);
+        }
+        i = url.indexOf("://");
+        if (i >= 0) {
+            if (i == 0) throw new IllegalStateException("url missing protocol: \"" + url + "\"");
+            protocol = url.substring(0, i);
+            url = url.substring(i + 3);
+        } else {
+            // case: file:/path/to/file.txt
+            i = url.indexOf(":/");
+            if (i >= 0) {
+                if (i == 0) throw new IllegalStateException("url missing protocol: \"" + url + "\"");
+                protocol = url.substring(0, i);
+                url = url.substring(i + 1);
+            }
+        }
+
+        i = url.indexOf("/");
+        if (i >= 0) {
+            path = url.substring(i + 1);
+            url = url.substring(0, i);
+        }
+        i = url.indexOf("@");
+        if (i >= 0) {
+            url = url.substring(i + 1);
+        }
+        i = url.indexOf(":");
+        if (i >= 0 && i < url.length() - 1) {
+            port = Integer.parseInt(url.substring(i + 1));
+            url = url.substring(0, i);
+        }
+        if (url.length() > 0) host = url;
+        return new Url(protocol, host, port, path, parameters);
+    }
+
+
+    public String toFullString() {
+        if (full != null) {
+            return full;
+        }
+        return full = buildString(true);
+    }
+
+    private String buildString( boolean appendParameter, String... parameters) {
+        return buildString( appendParameter, false, false, parameters);
+    }
+
+    private String buildString( boolean appendParameter, boolean useIP, boolean useService, String... parameters) {
+        StringBuilder buf = new StringBuilder();
+        if (protocol != null && protocol.length() > 0) {
+            buf.append(protocol);
+            buf.append("://");
+        }
+
+        String host;
+        if (useIP) {
+            host = getIp();
+        } else {
+            host = getHost();
+        }
+        if (host != null && host.length() > 0) {
+            buf.append(host);
+            if (port > 0) {
+                buf.append(":");
+                buf.append(port);
+            }
+        }
+        String path;
+        if (useService) {
+            path = getServiceKey();
+        } else {
+            path = getPath();
+        }
+        if (path != null && path.length() > 0) {
+            buf.append("/");
+            buf.append(path);
+        }
+        if (appendParameter) {
+            buildParameters(buf, true, parameters);
+        }
+        return buf.toString();
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public String getFull() {
+        return full;
+    }
+
+    public void setFull(String full) {
+        this.full = full;
+    }
+
+    public String getIp() {
+        if (ip == null) {
+            ip = NetUtils.getIpByHost(host);
+        }
+        return ip;
+    }
+
+    public String getServiceKey() {
+        String inf = getServiceInterface();
+        if (inf == null) return null;
+        StringBuilder buf = new StringBuilder();
+        String group = getParameter(Constants.GROUP_KEY);
+        if (group != null && group.length() > 0) {
+            buf.append(group).append("/");
+        }
+        buf.append(inf);
+        String version = getParameter(Constants.VERSION_KEY);
+        if (version != null && version.length() > 0) {
+            buf.append(":").append(version);
+        }
+        return buf.toString();
+    }
+
+    public String getServiceInterface() {
+        return getParameter(Constants.INTERFACE_KEY, path);
+    }
+
+    public InetSocketAddress toInetSocketAddress() {
+        return new InetSocketAddress(host, port);
+    }
+
+    public boolean hasParameter(String key) {
+        String value = getParameter(key);
+        return value != null && value.length() > 0;
     }
 }
