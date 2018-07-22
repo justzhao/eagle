@@ -46,6 +46,10 @@ public class Url {
 
     private String ip;
 
+    public Url(){
+
+    }
+
 
     public Url(String protocol, String host, int port, String path, Map<String, String> parameters) {
 

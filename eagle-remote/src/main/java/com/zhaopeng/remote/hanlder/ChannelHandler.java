@@ -32,6 +32,7 @@ public class ChannelHandler {
             channel.writeAndFlush(message);
 
         } else {
+            channel.writeAndFlush(message);
             logger.error("not request {}", message);
         }
 

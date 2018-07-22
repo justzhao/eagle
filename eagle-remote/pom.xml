@@ -52,11 +52,7 @@
             <artifactId>eagle-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.zhaopeng</groupId>
-            <artifactId>eagle-spring</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
     </dependencies>
 
     <build>
