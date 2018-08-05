@@ -39,12 +39,14 @@ public class Url {
 
     private int timeOut;
 
-    private final String path;
+    private  String path;
 
 
     private String full;
 
     private String ip;
+
+    private String registerUrl;
 
     public Url(){
 
@@ -129,7 +131,7 @@ public class Url {
 
     public String getRegisterUrl() {
 
-        return "";
+        return registerUrl;
     }
 
     public int getThreads() {

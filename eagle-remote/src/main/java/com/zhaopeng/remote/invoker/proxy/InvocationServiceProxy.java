@@ -20,7 +20,7 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
     public InvocationServiceProxy(Class<T> interfaceClass, Url url) {
         this.interfaceClass = interfaceClass;
         this.url = url;
-        this.invoker = new Invoker();
+        this.invoker = new Invoker(url);
     }
 
 
@@ -42,6 +42,6 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
             return invoker.equals(args[0]);
         }
 
-        return null;
+        return invoker.invoker(interfaceClass.getName(),methodName,args);
     }
 }

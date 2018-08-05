@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContextAware;
 /**
  * Created by zhaopeng on 2018/7/4.
  */
-public class ReferenceBean<T> extends AbstractConfig implements ApplicationContextAware,FactoryBean,InitializingBean {
+public class ReferenceBean<T> extends AbstractConfig implements ApplicationContextAware, FactoryBean, InitializingBean {
 
 
     private transient volatile T ref;
@@ -46,17 +46,18 @@ public class ReferenceBean<T> extends AbstractConfig implements ApplicationConte
 
     private void init() {
 
-        Url url=new Url();
-        ref= ProxyServiceFactory.newServiceInstance(url);
+        Url url = new Url();
+        ref = ProxyServiceFactory.newServiceInstance(url);
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext=applicationContext;
+        this.applicationContext = applicationContext;
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
 
+        init();
     }
 }
