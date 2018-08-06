@@ -10,6 +10,7 @@
         <module>eagle-spring</module>
         <module>eagle-registry</module>
         <module>eagle-common</module>
+
     </modules>
     <packaging>pom</packaging>
 
