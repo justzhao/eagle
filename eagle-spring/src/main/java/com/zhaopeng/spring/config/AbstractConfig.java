@@ -31,6 +31,8 @@ public abstract class AbstractConfig {
 
     protected int retries;
 
+    protected String registerUrl;
+
     public static Logger getLogger() {
         return logger;
     }
@@ -105,5 +107,13 @@ public abstract class AbstractConfig {
 
     public void setRetries(int retries) {
         this.retries = retries;
+    }
+
+    public String getRegisterUrl() {
+        return registerUrl;
+    }
+
+    public void setRegisterUrl(String registerUrl) {
+        this.registerUrl = registerUrl;
     }
 }

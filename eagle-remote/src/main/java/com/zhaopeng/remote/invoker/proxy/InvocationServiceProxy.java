@@ -42,6 +42,6 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
             return invoker.equals(args[0]);
         }
 
-        return invoker.invoker(interfaceClass.getName(),methodName,args);
+        return invoker.invoker(interfaceClass.getName(),methodName,args,method.getParameterTypes());
     }
 }

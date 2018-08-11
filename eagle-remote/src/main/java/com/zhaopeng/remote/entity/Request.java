@@ -1,14 +1,27 @@
 package com.zhaopeng.remote.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by zhaopeng on 2016/11/4.
  */
-public class Request {
+public class Request implements Serializable {
 
-    // 请求id
+    /**
+     * 请求id
+     */
     private String requestId;
+    /**
+     * 请求数据
+     */
     // 类名字
-    private Object data;
+    private String className;
+    // 方法名字
+    private String methodName;
+    // 参数类型
+    private Class<?>[] parameterTypes;
+    // 参数
+    private Object[] parameters;
 
     private String version;
 
@@ -25,13 +38,6 @@ public class Request {
         this.requestId = requestId;
     }
 
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
-    }
 
     public String getVersion() {
         return version;
@@ -55,5 +61,37 @@ public class Request {
 
     public void setTwoWay(boolean twoWay) {
         this.twoWay = twoWay;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public Class<?>[] getParameterTypes() {
+        return parameterTypes;
+    }
+
+    public void setParameterTypes(Class<?>[] parameterTypes) {
+        this.parameterTypes = parameterTypes;
+    }
+
+    public Object[] getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Object[] parameters) {
+        this.parameters = parameters;
     }
 }

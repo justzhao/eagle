@@ -48,6 +48,11 @@ public class Url {
 
     private String registerUrl;
 
+    /**
+     *  某接口对应的provider的url
+     */
+    private List<String>  urls;
+
     public Url(){
 
     }
@@ -141,6 +146,8 @@ public class Url {
     public void setThreads(int threads) {
         this.threads = threads;
     }
+
+
 
     public String buildUrlString() {
         StringBuilder buf = new StringBuilder();
@@ -418,5 +425,25 @@ public class Url {
     public boolean hasParameter(String key) {
         String value = getParameter(key);
         return value != null && value.length() > 0;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public void setRegisterUrl(String registerUrl) {
+        this.registerUrl = registerUrl;
+    }
+
+    public List<String> getUrls() {
+        return urls;
+    }
+
+    public void setUrls(List<String> urls) {
+        this.urls = urls;
     }
 }

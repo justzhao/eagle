@@ -21,21 +21,26 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by zhaopeng on 2018/7/16.
  */
+
+@Slf4j
 public class NettyClient {
 
     private Logger logger = LoggerFactory.getLogger(NettyClient.class);
 
-    private static final NioEventLoopGroup nioEventLoopGroup = new NioEventLoopGroup(Constants.DEFAULT_IO_THREADS, new DefaultThreadFactory("NettyClientWorker", true));
-
+    private static final NioEventLoopGroup nioEventLoopGroup = new NioEventLoopGroup(Constants.DEFAULT_IO_THREADS,
+        new DefaultThreadFactory("NettyClientWorker", true));
 
     private final Url url;
 
@@ -43,8 +48,7 @@ public class NettyClient {
 
     private volatile Channel channel;
 
-
-    public NettyClient(Url url) throws Throwable {
+    public NettyClient(Url url) throws Exception {
 
         this.url = url;
 
@@ -57,11 +61,11 @@ public class NettyClient {
         final NettyClientHandler nettyClientHandler = new NettyClientHandler(url, new NettyChannelHandler(url));
         bootstrap = new Bootstrap();
         bootstrap.group(nioEventLoopGroup)
-                .option(ChannelOption.SO_KEEPALIVE, true)
-                .option(ChannelOption.TCP_NODELAY, true)
-                .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-                //.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getTimeout())
-                .channel(NioSocketChannel.class);
+            .option(ChannelOption.SO_KEEPALIVE, true)
+            .option(ChannelOption.TCP_NODELAY, true)
+            .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+            //.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getTimeout())
+            .channel(NioSocketChannel.class);
 
         if (url.getTimeOut() < 3000) {
             bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000);
@@ -74,15 +78,14 @@ public class NettyClient {
             protected void initChannel(Channel ch) throws Exception {
 
                 ch.pipeline()//.addLast("logging",new LoggingHandler(LogLevel.INFO))//for debug
-                        .addLast("decoder", new Decoder(Response.class))
-                        .addLast("encoder", new Encoder(Request.class))
-                        .addLast("handler", nettyClientHandler);
+                    .addLast("decoder", new Decoder(Response.class))
+                    .addLast("encoder", new Encoder(Request.class))
+                    .addLast("handler", nettyClientHandler);
             }
         });
     }
 
-
-    protected void doConnected() throws Throwable {
+    protected void doConnected() throws Exception {
         long start = System.currentTimeMillis();
         ChannelFuture future = bootstrap.connect(getConnectAddress());
         try {
@@ -107,12 +110,13 @@ public class NettyClient {
                 }
             } else if (future.cause() != null) {
                 throw new RemotingException("client(url: " + getUrl() + ") failed to connect to server "
-                        + getRemoteAddress() + ", error message is:" + future.cause().getMessage(), future.cause());
+                    + getRemoteAddress() + ", error message is:" + future.cause().getMessage(), future.cause());
             } else {
                 throw new RemotingException("client(url: " + getUrl() + ") failed to connect to server "
-                        + getRemoteAddress() + " client-side timeout "
-                        + getUrl().getTimeOut() + "ms (elapsed: " + (System.currentTimeMillis() - start) + "ms) from netty client "
-                        + NetUtils.getLocalHost());
+                    + getRemoteAddress() + " client-side timeout "
+                    + getUrl().getTimeOut() + "ms (elapsed: " + (System.currentTimeMillis() - start)
+                    + "ms) from netty client "
+                    + NetUtils.getLocalHost());
             }
         } finally {
 
@@ -132,18 +136,34 @@ public class NettyClient {
     }
 
     public InetSocketAddress getConnectAddress() {
-        return new InetSocketAddress(NetUtils.filterLocalHost(getUrl().getHost()), getUrl().getPort());
+
+        List<String> urls = getUrl().getUrls();
+        if (CollectionUtils.isEmpty(urls)) {
+            throw new IllegalArgumentException("interface " + getUrl().getInterfaceName() + " no provider");
+        }
+        String remoteUrl = urls.get(0);
+
+        String remoteUrls[] = remoteUrl.split(":");
+        if (remoteUrls == null || remoteUrls.length != 2) {
+            throw new IllegalArgumentException(
+                "interface " + getUrl().getInterfaceName() + " provider url illegal " + remoteUrl);
+        }
+        try {
+            return new InetSocketAddress(remoteUrls[0], Integer.parseInt(remoteUrls[1]));
+        } catch (Exception e) {
+
+            logger.error(" getConnectAddress error {}", e);
+        }
+        return null;
+
     }
 
     public InetSocketAddress getRemoteAddress() {
         return getUrl().toInetSocketAddress();
     }
 
-    public ResponseFuture sendMessage(Object object){
-        Request req = new Request();
-        req.setVersion("2.0.0");
-        req.setTwoWay(true);
-        req.setData(object);
+    public ResponseFuture sendMessage(Request req) {
+
         DefaultFuture future = new DefaultFuture(channel, req, url.getTimeOut());
         try {
             channel.writeAndFlush(req);
@@ -153,6 +173,5 @@ public class NettyClient {
         }
         return future;
     }
-
 
 }
