@@ -14,7 +14,6 @@ public class Url {
     // 暂时默认为eagle
     private String protocol;
 
-
     private String host;
 
     private int port;
@@ -24,23 +23,18 @@ public class Url {
     // 是消费者还是提供者
     private String type;
 
-
     private int threads;
-
 
     /**
      * 注册地址
      */
     private String registerAddress;
 
-
     private Map<String, String> parameters;
-
 
     private int timeOut;
 
-    private  String path;
-
+    private String path;
 
     private String full;
 
@@ -49,14 +43,13 @@ public class Url {
     private String registerUrl;
 
     /**
-     *  某接口对应的provider的url
+     * 某接口对应的provider的url
      */
-    private List<String>  urls;
+    private List<String> urls;
 
-    public Url(){
+    public Url() {
 
     }
-
 
     public Url(String protocol, String host, int port, String path, Map<String, String> parameters) {
 
@@ -76,7 +69,6 @@ public class Url {
         }
         this.parameters = Collections.unmodifiableMap(parameters);
     }
-
 
     public String getProtocol() {
         return protocol;
@@ -147,8 +139,6 @@ public class Url {
         this.threads = threads;
     }
 
-
-
     public String buildUrlString() {
         StringBuilder buf = new StringBuilder();
         if (protocol != null && protocol.length() > 0) {
@@ -196,9 +186,9 @@ public class Url {
         if (getParameters() != null && getParameters().size() > 0) {
             List<String> includes = (parameters == null || parameters.length == 0 ? null : Arrays.asList(parameters));
             boolean first = true;
-            for (Map.Entry<String, String> entry : new TreeMap<String, String>(getParameters()).entrySet()) {
+            for (Map.Entry<String, String> entry : new TreeMap<>(getParameters()).entrySet()) {
                 if (entry.getKey() != null && entry.getKey().length() > 0
-                        && (includes == null || includes.contains(entry.getKey()))) {
+                    && (includes == null || includes.contains(entry.getKey()))) {
                     if (first) {
                         if (concat) {
                             buf.append("?");
@@ -214,8 +204,6 @@ public class Url {
             }
         }
     }
-
-
 
     public String getParameter(String key) {
         String value = parameters.get(key);
@@ -270,7 +258,6 @@ public class Url {
         this.timeOut = timeOut;
     }
 
-
     public static Url valueOf(String url) {
         if (url == null || (url = url.trim()).length() == 0) {
             throw new IllegalArgumentException("url == null");
@@ -300,14 +287,18 @@ public class Url {
         }
         i = url.indexOf("://");
         if (i >= 0) {
-            if (i == 0) throw new IllegalStateException("url missing protocol: \"" + url + "\"");
+            if (i == 0) {
+                throw new IllegalStateException("url missing protocol: \"" + url + "\"");
+            }
             protocol = url.substring(0, i);
             url = url.substring(i + 3);
         } else {
             // case: file:/path/to/file.txt
             i = url.indexOf(":/");
             if (i >= 0) {
-                if (i == 0) throw new IllegalStateException("url missing protocol: \"" + url + "\"");
+                if (i == 0) {
+                    throw new IllegalStateException("url missing protocol: \"" + url + "\"");
+                }
                 protocol = url.substring(0, i);
                 url = url.substring(i + 1);
             }
@@ -327,10 +318,9 @@ public class Url {
             port = Integer.parseInt(url.substring(i + 1));
             url = url.substring(0, i);
         }
-        if (url.length() > 0) host = url;
+        if (url.length() > 0) { host = url; }
         return new Url(protocol, host, port, path, parameters);
     }
-
 
     public String toFullString() {
         if (full != null) {
@@ -339,11 +329,11 @@ public class Url {
         return full = buildString(true);
     }
 
-    private String buildString( boolean appendParameter, String... parameters) {
-        return buildString( appendParameter, false, false, parameters);
+    private String buildString(boolean appendParameter, String... parameters) {
+        return buildString(appendParameter, false, false, parameters);
     }
 
-    private String buildString( boolean appendParameter, boolean useIP, boolean useService, String... parameters) {
+    private String buildString(boolean appendParameter, boolean useIP, boolean useService, String... parameters) {
         StringBuilder buf = new StringBuilder();
         if (protocol != null && protocol.length() > 0) {
             buf.append(protocol);
@@ -379,8 +369,21 @@ public class Url {
         return buf.toString();
     }
 
-    public String getPath() {
-        return path;
+    public String getPath()  {
+        StringBuilder buf = new StringBuilder();
+        if (protocol != null && protocol.length() > 0) {
+            buf.append("/");
+            buf.append(protocol);
+            buf.append("/");
+        }
+        if (interfaceName == null) {
+
+            throw new IllegalArgumentException("interfaceName is null");
+        }
+        buf.append(interfaceName);
+        buf.append("/");
+        buf.append(type);
+        return buf.toString();
     }
 
     public String getFull() {
@@ -400,7 +403,7 @@ public class Url {
 
     public String getServiceKey() {
         String inf = getServiceInterface();
-        if (inf == null) return null;
+        if (inf == null) { return null; }
         StringBuilder buf = new StringBuilder();
         String group = getParameter(Constants.GROUP_KEY);
         if (group != null && group.length() > 0) {

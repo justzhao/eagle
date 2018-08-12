@@ -10,7 +10,8 @@ import com.zhaopeng.remote.dispacher.DefaultFuture;
 import com.zhaopeng.remote.dispacher.ResponseFuture;
 import com.zhaopeng.remote.entity.Request;
 import com.zhaopeng.remote.entity.Response;
-import com.zhaopeng.remote.hanlder.NettyChannelHandler;
+import com.zhaopeng.remote.hanlder.ChannelHandler;
+
 import com.zhaopeng.remote.hanlder.NettyClientHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -44,13 +45,16 @@ public class NettyClient {
 
     private final Url url;
 
+    private final ChannelHandler handler;
+
     private Bootstrap bootstrap;
 
     private volatile Channel channel;
 
-    public NettyClient(Url url) throws Exception {
+    public NettyClient(Url url, ChannelHandler handler) throws Exception {
 
         this.url = url;
+        this.handler = handler;
 
         doOpen();
         doConnected();
@@ -58,7 +62,7 @@ public class NettyClient {
     }
 
     private void doOpen() {
-        final NettyClientHandler nettyClientHandler = new NettyClientHandler(url, new NettyChannelHandler(url));
+        final NettyClientHandler nettyClientHandler = new NettyClientHandler(url, handler);
         bootstrap = new Bootstrap();
         bootstrap.group(nioEventLoopGroup)
             .option(ChannelOption.SO_KEEPALIVE, true)

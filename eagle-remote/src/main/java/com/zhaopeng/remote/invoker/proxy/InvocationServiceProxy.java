@@ -1,6 +1,7 @@
 package com.zhaopeng.remote.invoker.proxy;
 
 import com.zhaopeng.common.bean.Url;
+import com.zhaopeng.remote.hanlder.ChannelHandler;
 import com.zhaopeng.remote.invoker.Invoker;
 
 import java.lang.reflect.InvocationHandler;
@@ -17,12 +18,11 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
 
     private final Invoker invoker;
 
-    public InvocationServiceProxy(Class<T> interfaceClass, Url url) {
+    public InvocationServiceProxy(Class<T> interfaceClass, Url url, ChannelHandler handler) {
         this.interfaceClass = interfaceClass;
         this.url = url;
-        this.invoker = new Invoker(url);
+        this.invoker = new Invoker(url, handler);
     }
-
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -42,6 +42,6 @@ public class InvocationServiceProxy<T> implements InvocationHandler {
             return invoker.equals(args[0]);
         }
 
-        return invoker.invoker(interfaceClass.getName(),methodName,args,method.getParameterTypes());
+        return invoker.invoker(interfaceClass.getName(), methodName, args, method.getParameterTypes());
     }
 }

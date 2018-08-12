@@ -1,1 +1,1 @@
-http\://www.zhaoljhpeng.cn/schema/eagle=com.zhaopeng.eagle.spring.CommonNamespaceHandler
+http\://www.zhaoljhpeng.cn/schema/eagle=com.zhaopeng.spring.schema.EagleNamespaceHandler

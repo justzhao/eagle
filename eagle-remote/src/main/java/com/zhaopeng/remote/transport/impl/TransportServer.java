@@ -2,6 +2,7 @@ package com.zhaopeng.remote.transport.impl;
 
 import com.zhaopeng.common.bean.Url;
 import com.zhaopeng.common.exception.RemotingException;
+import com.zhaopeng.remote.hanlder.ChannelHandler;
 import com.zhaopeng.remote.transport.Server;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,10 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TransportServer {
 
-    public  static  Server bind(Url url) {
+    public static Server bind(Url url, ChannelHandler handler) {
 
         try {
-            new NettyServer(url);
+            new NettyServer(url, handler);
         } catch (RemotingException e) {
             e.printStackTrace();
         }
@@ -23,13 +24,13 @@ public class TransportServer {
 
     }
 
-    public static NettyClient connect(Url url) {
+    public static NettyClient connect(Url url, ChannelHandler handler) {
 
         try {
-            return new NettyClient(url);
-        }catch (Exception e){
+            return new NettyClient(url, handler);
+        } catch (Exception e) {
 
-            log.error("connect url {} error {}",url,e);
+            log.error("connect url {} error {}", url, e);
         }
         return null;
 

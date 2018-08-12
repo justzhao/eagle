@@ -26,11 +26,10 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class CuratorZookeeperClient implements ZookeeperClient {
 
-
-    private final ConcurrentMap<String, ConcurrentMap<ChildListener, CuratorWatcher>> childListeners = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ConcurrentMap<ChildListener, CuratorWatcher>> childListeners
+        = new ConcurrentHashMap<>();
 
     private final Set<StateListener> stateListeners = new CopyOnWriteArraySet<>();
-
 
     /**
      * 客户端
@@ -43,9 +42,9 @@ public class CuratorZookeeperClient implements ZookeeperClient {
         try {
             this.url = url;
             CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
-                    .connectString(url)
-                    .retryPolicy(new RetryNTimes(1, 1000))
-                    .connectionTimeoutMs(5000);
+                .connectString(url)
+                .retryPolicy(new RetryNTimes(1, 1000))
+                .connectionTimeoutMs(5000);
 
             client = builder.build();
             client.getConnectionStateListenable().addListener(new ConnectionStateListener() {
@@ -66,7 +65,6 @@ public class CuratorZookeeperClient implements ZookeeperClient {
         }
     }
 
-
     @Override
     public void create(String path, boolean ephemeral) {
 
@@ -79,7 +77,6 @@ public class CuratorZookeeperClient implements ZookeeperClient {
                     create(parentPath, false);
                 }
             }
-
 
             if (ephemeral) {
                 client.create().withMode(CreateMode.EPHEMERAL).forPath(path);
@@ -127,7 +124,6 @@ public class CuratorZookeeperClient implements ZookeeperClient {
         return false;
     }
 
-
     @Override
     public List<String> addChildListener(String path, ChildListener listener) {
         ConcurrentMap<ChildListener, CuratorWatcher> listeners = childListeners.get(path);
@@ -160,7 +156,7 @@ public class CuratorZookeeperClient implements ZookeeperClient {
         if (listeners != null) {
             CuratorWatcher targetListener = listeners.remove(listener);
             if (targetListener != null) {
-                ((CuratorWatcherImpl) targetListener).unwatch();
+                ((CuratorWatcherImpl)targetListener).unwatch();
             }
         }
 
@@ -214,9 +210,9 @@ public class CuratorZookeeperClient implements ZookeeperClient {
             if (listener != null) {
                 String path = event.getPath() == null ? "" : event.getPath();
                 listener.childChanged(path,
-                        !Strings.isNullOrEmpty(path)
-                                ? client.getChildren().usingWatcher(this).forPath(path)
-                                : Collections.<String>emptyList());
+                    !Strings.isNullOrEmpty(path)
+                        ? client.getChildren().usingWatcher(this).forPath(path)
+                        : Collections.<String>emptyList());
             }
         }
     }

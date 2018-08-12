@@ -13,25 +13,25 @@ public class NettyClientHandler extends ChannelDuplexHandler {
     private Url url;
 
 
-    private final NettyChannelHandler hander;
+    private final ChannelHandler handler;
 
 
-    public NettyClientHandler(Url url, NettyChannelHandler handler) {
+    public NettyClientHandler(Url url, ChannelHandler handler) {
 
         this.url = url;
 
-        this.hander = handler;
+        this.handler = handler;
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 
         //接收到消息
-        hander.received(ctx.channel(), msg);
+        handler.received(ctx.channel(), msg);
     }
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        hander.write(ctx,msg);
+        handler.sent(ctx.channel(),msg);
     }
 }

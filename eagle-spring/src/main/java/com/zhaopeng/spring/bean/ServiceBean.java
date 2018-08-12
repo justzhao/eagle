@@ -2,9 +2,13 @@ package com.zhaopeng.spring.bean;
 
 import com.google.common.base.Strings;
 import com.zhaopeng.common.bean.Url;
+import com.zhaopeng.common.utils.NetUtils;
 import com.zhaopeng.registry.Registry;
-import com.zhaopeng.registry.factory.ZookeeperClientFactory;
+import com.zhaopeng.registry.factory.RegisterClientFactory;
+import com.zhaopeng.remote.transport.Server;
+import com.zhaopeng.remote.transport.impl.TransportServer;
 import com.zhaopeng.spring.config.AbstractConfig;
+import com.zhaopeng.spring.handler.NettyChannelHandler;
 import com.zhaopeng.spring.holder.ServiceHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +24,6 @@ public class ServiceBean<T> extends AbstractConfig implements ApplicationContext
 
     Logger logger = LoggerFactory.getLogger(ServiceBean.class);
 
-
     /**
      * 接口路径
      */
@@ -29,9 +32,13 @@ public class ServiceBean<T> extends AbstractConfig implements ApplicationContext
     /**
      * 引用的对象
      */
-    private T ref;
+    private volatile T ref;
+
+    private volatile Server server;
 
     private Class<?> interfaceClass;
+
+    private Url url;
 
     /**
      * spring上下文
@@ -50,15 +57,6 @@ public class ServiceBean<T> extends AbstractConfig implements ApplicationContext
         this.applicationContext = applicationContext;
     }
 
-    /**
-     * 检查配置文件的正确性
-     */
-    private void checkConfig() {
-
-
-
-    }
-
     private void register() {
         ApplicationBean applicationBean = applicationContext.getBean(ApplicationBean.class);
 
@@ -66,14 +64,20 @@ public class ServiceBean<T> extends AbstractConfig implements ApplicationContext
             throw new IllegalStateException("<application:service registerUrl=\"\" /> registerUrl not allow null!");
         }
         /**
-         * 调用注册
+         * provider调用注册
          */
-        Registry registry = ZookeeperClientFactory.getRegistry(applicationBean.getRegisterUrl());
-        Url url = buildUrl(applicationBean);
+        Registry registry = RegisterClientFactory.getRegistry(applicationBean.getRegisterUrl());
+        url = buildUrl(applicationBean);
+
+        url.setHost(NetUtils.getLocalHost());
         registry.registerUrl(url);
+
+        if (server == null) {
+            server = TransportServer.bind(url,new NettyChannelHandler());
+        }
     }
 
-    private Url buildUrl(ApplicationBean applicationBean ) {
+    private Url buildUrl(ApplicationBean applicationBean) {
 
         Url url = new Url();
         url.setInterfaceName(interfaceName);
@@ -90,14 +94,14 @@ public class ServiceBean<T> extends AbstractConfig implements ApplicationContext
         }
         try {
             interfaceClass = Class.forName(interfaceName, true, Thread.currentThread()
-                    .getContextClassLoader());
+                .getContextClassLoader());
         } catch (ClassNotFoundException e) {
             logger.error("export class {} error ", e);
         }
         if (!interfaceClass.isInstance(ref)) {
             throw new IllegalStateException("The class "
-                    + ref.getClass().getName() + " unimplemented interface "
-                    + interfaceClass + "!");
+                + ref.getClass().getName() + " unimplemented interface "
+                + interfaceClass + "!");
         }
 
         ServiceHolder.putService(interfaceName, ref);

@@ -10,9 +10,5 @@ public interface Server {
     public void doClose() throws Throwable;
 
 
-    public void send(Object message, boolean sent);
-
-
-
 
 }

@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
  * Created by zhaopeng on 2018/7/6.
  */
 
-
 @Slf4j
 public class ZookeeperRegistry implements Registry {
 
@@ -33,10 +32,9 @@ public class ZookeeperRegistry implements Registry {
     public List<String> subscribe(Url url, ChildListener childListener) {
         try {
             final String path = url.getPath();
-
-            return client.addChildListener(path,childListener );
+            return client.addChildListener(path, childListener);
         } catch (Exception e) {
-           log.error("订阅服务失败 {}", e);
+            log.error("订阅服务失败 {}", e);
         }
         return null;
     }

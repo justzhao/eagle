@@ -7,10 +7,12 @@ import java.util.Map;
 import com.zhaopeng.common.Constants;
 import com.zhaopeng.common.bean.Url;
 import com.zhaopeng.registry.Registry;
+import com.zhaopeng.registry.factory.RegisterClientFactory;
 import com.zhaopeng.registry.impl.ZookeeperRegistry;
 import com.zhaopeng.registry.listener.ChildListener;
 import com.zhaopeng.remote.invoker.proxy.ProxyServiceFactory;
 import com.zhaopeng.spring.config.AbstractConfig;
+import com.zhaopeng.spring.handler.NettyChannelHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
@@ -57,14 +59,14 @@ public class ReferenceBean<T> extends AbstractConfig implements ApplicationConte
 
     private void init() {
 
+        initConfig();
         url = initUrl();
+        registry = RegisterClientFactory.getRegistry(url.getRegisterUrl());
+        url.setType(Constants.CONSUMER_SIDE);
 
-        String interfaceName = url.getInterfaceName();
-
-        registry = new ZookeeperRegistry(url.getRegisterUrl());
+        registry.registerUrl(url);
 
         url.setType(Constants.PROVIDER_SIDE);
-
         // 订阅了服务，也需要监听。如果provider的节点发生变化，需要重新生成this.obj
         List<String> urls = registry.subscribe(url, new ChildListener() {
             @Override
@@ -73,12 +75,13 @@ public class ReferenceBean<T> extends AbstractConfig implements ApplicationConte
             }
         });
         url.setUrls(urls);
-        ref = ProxyServiceFactory.newServiceInstance(url);
+        ref = ProxyServiceFactory.newServiceInstance(url,new NettyChannelHandler());
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+
     }
 
     @Override
@@ -87,8 +90,14 @@ public class ReferenceBean<T> extends AbstractConfig implements ApplicationConte
         init();
     }
 
-    private Url initUrl() {
+    private void initConfig() {
+        ApplicationBean bean = applicationContext.getBean(ApplicationBean.class);
+        setThreads(bean.getThreads());
+        setRegisterUrl(bean.getRegisterUrl());
+        setProtocol(bean.getProtocol());
+    }
 
+    private Url initUrl() {
         Url url = new Url();
         url.setInterfaceName(interfaceName);
         url.setProtocol(protocol);
@@ -99,9 +108,7 @@ public class ReferenceBean<T> extends AbstractConfig implements ApplicationConte
     }
 
     public Map<String, String> getParameters() {
-
         Map<String, String> map = new HashMap<>();
-
         map.put(Constants.ACCEPTS_KEY, String.valueOf(accepts));
         map.put(Constants.TIMEOUT_KEY, String.valueOf(timeout));
         map.put(Constants.THREADS, String.valueOf(threads));
@@ -113,7 +120,7 @@ public class ReferenceBean<T> extends AbstractConfig implements ApplicationConte
     public void notify(String path, List<String> children) {
         log.info("path {} is changed  {}", path, children);
         url.setUrls(children);
-        this.ref = ProxyServiceFactory.newServiceInstance(url);
+        this.ref = ProxyServiceFactory.newServiceInstance(url,new NettyChannelHandler());
 
     }
 }

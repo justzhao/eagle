@@ -5,6 +5,7 @@ import com.zhaopeng.common.bean.Url;
 
 import com.zhaopeng.remote.dispacher.ResponseFuture;
 import com.zhaopeng.remote.entity.Request;
+import com.zhaopeng.remote.hanlder.ChannelHandler;
 import com.zhaopeng.remote.transport.impl.NettyClient;
 import com.zhaopeng.remote.transport.impl.TransportServer;
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +21,9 @@ public class Invoker {
 
     private final NettyClient client;
 
-    public Invoker(Url url) {
+    public Invoker(Url url, ChannelHandler handler) {
         this.url = url;
-        client = TransportServer.connect(url);
+        client = TransportServer.connect(url, handler);
     }
 
     public Object invoker(String interfaceName, String methodName, Object[] args,

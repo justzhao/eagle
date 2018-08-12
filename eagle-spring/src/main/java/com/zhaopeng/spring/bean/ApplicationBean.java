@@ -37,6 +37,7 @@ public class ApplicationBean {
 
 
 
+
     public int getPort() {
         return port;
     }

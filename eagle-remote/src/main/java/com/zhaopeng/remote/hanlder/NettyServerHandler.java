@@ -1,34 +1,46 @@
 package com.zhaopeng.remote.hanlder;
 
+import com.zhaopeng.common.Constants;
 import com.zhaopeng.common.bean.Url;
 import io.netty.channel.*;
-
+import io.netty.util.concurrent.DefaultThreadFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by zhaopeng on 2018/7/12.
  */
+
+@Slf4j
 public class NettyServerHandler extends ChannelDuplexHandler {
 
-    private Url url;
+    private final Url url;
 
+    private final ExecutorService executor;
 
-    private final NettyChannelHandler hander;
+    private final ChannelHandler handler;
 
-
-    // <ip:port, channel>
     private final Map<String, Channel> channels = new ConcurrentHashMap<>();
 
+    protected static final String SERVER_THREAD_POOL_NAME = "EagleServerHandler";
 
-    public NettyServerHandler(Url url, NettyChannelHandler channelHandler) {
+    public NettyServerHandler(Url url, ChannelHandler channelHandler) {
         if (url == null) {
             throw new IllegalArgumentException("url == null");
         }
 
-        this.hander = channelHandler;
+        this.handler = channelHandler;
         this.url = url;
+
+        this.executor = new ThreadPoolExecutor(Constants.THREAD_POOL_CORE_SIZE, url.getThreads(),
+            Constants.THREAD_POOL_ALIVE_TIME, TimeUnit.SECONDS,
+            new ArrayBlockingQueue<Runnable>(Constants.THREAD_POOL_QUEUE_SIZE),new DefaultThreadFactory(SERVER_THREAD_POOL_NAME));
     }
 
     public Map<String, Channel> getChannels() {
@@ -46,10 +58,9 @@ public class NettyServerHandler extends ChannelDuplexHandler {
 
     }
 
-
     @Override
     public void disconnect(ChannelHandlerContext ctx, ChannelPromise future)
-            throws Exception {
+        throws Exception {
 
     }
 
@@ -58,23 +69,20 @@ public class NettyServerHandler extends ChannelDuplexHandler {
 
         //接收到消息
 
-        hander.received(ctx.channel(), msg);
-
+        handler.received(ctx.channel(), msg);
 
     }
-
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         super.write(ctx, msg, promise);
-        hander.write(ctx,msg);
+        handler.sent(ctx.channel(), msg);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
-            throws Exception {
+        throws Exception {
 
     }
-
 
 }

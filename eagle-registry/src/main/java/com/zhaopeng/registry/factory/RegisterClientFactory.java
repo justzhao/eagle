@@ -10,7 +10,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Created by zhaopeng on 2018/7/8.
  */
-public class ZookeeperClientFactory {
+public class RegisterClientFactory {
 
     private static final Map<String, Registry> REGISTRIES = new ConcurrentHashMap<String, Registry>();
 

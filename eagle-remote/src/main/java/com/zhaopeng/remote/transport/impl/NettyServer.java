@@ -7,6 +7,7 @@ import com.zhaopeng.remote.codec.Decoder;
 import com.zhaopeng.remote.codec.Encoder;
 import com.zhaopeng.remote.entity.Request;
 import com.zhaopeng.remote.entity.Response;
+import com.zhaopeng.remote.hanlder.ChannelHandler;
 import com.zhaopeng.remote.hanlder.NettyChannelHandler;
 import com.zhaopeng.remote.hanlder.NettyServerHandler;
 import com.zhaopeng.remote.transport.Server;
@@ -28,11 +29,8 @@ import java.util.Map;
  */
 public class NettyServer implements Server {
 
-
-    protected static final String SERVER_THREAD_POOL_NAME = "DubboServerHandler";
     private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
 
-    private InetSocketAddress localAddress;
     private InetSocketAddress bindAddress;
     private int accepts;
 
@@ -51,12 +49,14 @@ public class NettyServer implements Server {
 
     private final Url url;
 
-    public NettyServer(Url url) throws RemotingException {
+    private final ChannelHandler handler;
+
+    public NettyServer(Url url, ChannelHandler handler) throws RemotingException {
 
         this.url = url;
+        this.handler = handler;
         String bindIp = url.getHost();
         int bindPort = url.getPort();
-
 
         bindAddress = new InetSocketAddress(bindIp, bindPort);
         this.accepts = url.getParameter(Constants.ACCEPTS_KEY, Constants.DEFAULT_ACCEPTS);
@@ -68,54 +68,44 @@ public class NettyServer implements Server {
             }
         } catch (Throwable t) {
             throw new RemotingException("Failed to bind " + getClass().getSimpleName()
-                    + " on " + bindIp + ", cause: " + t.getMessage(), t);
+                + " on " + bindIp + ", cause: " + t.getMessage(), t);
         }
 
-
     }
-
 
     @Override
     public void doOpen() throws Throwable {
 
-
         bootstrap = new ServerBootstrap();
 
         bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("NettyServerBoss", true));
-        workerGroup = new NioEventLoopGroup(getUrl().getPositiveParameter(Constants.IO_THREADS_KEY, Constants.DEFAULT_IO_THREADS),
-                new DefaultThreadFactory("NettyServerWorker", true));
+        workerGroup = new NioEventLoopGroup(
+            getUrl().getPositiveParameter(Constants.IO_THREADS_KEY, Constants.DEFAULT_IO_THREADS),
+            new DefaultThreadFactory("NettyServerWorker", true));
 
-        final NettyServerHandler nettyServerHandler = new NettyServerHandler(getUrl(), new NettyChannelHandler(url));
+        final NettyServerHandler nettyServerHandler = new NettyServerHandler(getUrl(), handler);
         channels = nettyServerHandler.getChannels();
 
         bootstrap.group(bossGroup, workerGroup)
-                .channel(NioServerSocketChannel.class)
-                .childOption(ChannelOption.TCP_NODELAY, Boolean.TRUE)
-                .childOption(ChannelOption.SO_REUSEADDR, Boolean.TRUE)
-                .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-                .childHandler(new ChannelInitializer<NioSocketChannel>() {
-                    @Override
-                    protected void initChannel(NioSocketChannel ch) throws Exception {
+            .channel(NioServerSocketChannel.class)
+            .childOption(ChannelOption.TCP_NODELAY, Boolean.TRUE)
+            .childOption(ChannelOption.SO_REUSEADDR, Boolean.TRUE)
+            .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+            .childHandler(new ChannelInitializer<NioSocketChannel>() {
+                @Override
+                protected void initChannel(NioSocketChannel ch) throws Exception {
 
-                        ch.pipeline().addLast("decoder", new Decoder(Request.class))
-                                .addLast("encoder", new Encoder(Response.class))
-                                .addLast("handler", nettyServerHandler);
-                    }
-                });
+                    ch.pipeline().addLast("decoder", new Decoder(Request.class))
+                        .addLast("encoder", new Encoder(Response.class))
+                        .addLast("handler", nettyServerHandler);
+                }
+            });
         // bind
         ChannelFuture channelFuture = bootstrap.bind(getBindAddress());
         channelFuture.syncUninterruptibly();
         channel = channelFuture.channel();
     }
 
-    @Override
-    public void send(Object message, boolean sent) {
-
-        /**
-         *发送消息出去
-         */
-
-    }
 
 
     @Override
@@ -146,11 +136,9 @@ public class NettyServer implements Server {
         }
     }
 
-
     public boolean isBound() {
         return channel.isActive();
     }
-
 
     public Url getUrl() {
         return url;
