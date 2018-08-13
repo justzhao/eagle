@@ -1,5 +1,7 @@
 package com.zhaopeng.spring.bean;
 
+import java.net.URI;
+
 import com.google.common.base.Strings;
 import com.zhaopeng.common.bean.Url;
 import com.zhaopeng.common.utils.NetUtils;
@@ -73,7 +75,7 @@ public class ServiceBean<T> extends AbstractConfig implements ApplicationContext
         registry.registerUrl(url);
 
         if (server == null) {
-            server = TransportServer.bind(url,new NettyChannelHandler());
+            server = TransportServer.bind(url,new NettyChannelHandler(url));
         }
     }
 

@@ -1,7 +1,9 @@
 package com.zhaopeng.remote.hanlder;
 
 
-import com.zhaopeng.remote.entity.Response;
+
+import java.util.concurrent.ExecutionException;
+
 import io.netty.channel.Channel;
 
 public interface ChannelHandler {
@@ -12,7 +14,7 @@ public interface ChannelHandler {
 
     public void sent(Channel channel, Object message);
 
-    public void received(Channel channel, Object message);
+    public void received(Channel channel, Object message) throws ExecutionException;
 
     public void caught(Channel channel, Throwable ex);
 

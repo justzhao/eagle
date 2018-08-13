@@ -44,6 +44,8 @@ public class Constants {
 
     public static final int DEFAULT_RETRIES = 3;
 
+    public static final int DEFAULT_THREADS = 200;
+
     public static final int DEFAULT_IDLE_TIMEOUT = 600 * 1000;
 
     public static final int THREAD_POOL_CORE_SIZE = 10;
