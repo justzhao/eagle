@@ -5,7 +5,7 @@ import com.zhaopeng.common.bean.Url;
 import io.netty.channel.*;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jboss.netty.handler.execution.ChannelEventRunnable;
+
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
