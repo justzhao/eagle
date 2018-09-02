@@ -1,7 +1,6 @@
 package com.zhaopeng.remote.session;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface SessionManager {
 
@@ -16,13 +15,15 @@ public interface SessionManager {
     void removeSession(String sessionId);
 
     /**
-     *  get all session
+     * get all session
+     *
      * @return
      */
     Collection<Session> listAllSessions();
 
     /**
      * 获取一个session
+     *
      * @param sessionId
      * @return
      */
@@ -30,9 +31,23 @@ public interface SessionManager {
 
     /**
      * accsss session
+     *
      * @param sessionId
      */
-    void  sessionAccess(String sessionId);
+    void sessionAccess(String sessionId);
 
+    /**
+     * get count
+     *
+     * @return
+     */
+    int getSessionCount();
+
+    /**
+     * update
+     *
+     * @param sessionId
+     */
+    void updateSession(String sessionId);
 
 }
