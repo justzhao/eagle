@@ -1,12 +1,12 @@
 package com.zhaopeng.remote.session.tcp.exchange;
 
 
-import java.util.List;
+
 
 import com.zhaopeng.remote.session.Session;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
+
 
 /**
  * @author zhaopeng
@@ -17,8 +17,8 @@ public abstract class ExchangeTcpSessionManager extends ExchangeSessionManager {
     /**
      * create Session
      * @param sessionId
-     * @param ctx
+     * @param channel
      * @return
      */
-    public abstract Session createSession(String sessionId, ChannelHandlerContext ctx);
+    public abstract Session createSession(String sessionId, Channel channel);
 }

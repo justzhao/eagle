@@ -2,6 +2,7 @@ package com.zhaopeng.remote.session.tcp.connector;
 
 import com.zhaopeng.common.exception.LostConnectException;
 import com.zhaopeng.common.exception.PushException;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -14,10 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TcpConnection<T> extends ExchangeConnection<T> {
 
-    private ChannelHandlerContext cxt;
+    private Channel channel;
 
-    public TcpConnection(ChannelHandlerContext cxt) {
-        this.cxt = cxt;
+    public TcpConnection( Channel channel) {
+        this.channel = channel;
     }
 
     @Override
@@ -28,8 +29,8 @@ public class TcpConnection<T> extends ExchangeConnection<T> {
     public void close() {
         this.close = true;
 
-        cxt.close();
-        log.debug("the connection have been destroyed! ctx -> " + cxt.toString());
+        channel.close();
+        log.debug("the connection have been destroyed! channel -> " + channel.toString());
     }
 
     @Override
@@ -50,7 +51,7 @@ public class TcpConnection<T> extends ExchangeConnection<T> {
 
     private void pushMessage0(T message) {
         try {
-            ChannelFuture cf = cxt.writeAndFlush(message);
+            ChannelFuture cf = channel.writeAndFlush(message);
             cf.addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws PushException {
@@ -82,8 +83,7 @@ public class TcpConnection<T> extends ExchangeConnection<T> {
         boolean sent = true;
         int timeout = 60;
         try {
-            ChannelFuture cf = cxt.write(message);
-            cxt.flush();
+            ChannelFuture cf = channel.writeAndFlush(message);
             if (sent) {
                 success = cf.await(timeout);
             }

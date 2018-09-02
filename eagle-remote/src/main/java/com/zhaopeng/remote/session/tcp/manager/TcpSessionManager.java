@@ -23,7 +23,7 @@ public class TcpSessionManager extends ExchangeTcpSessionManager {
 
 
     @Override
-    public Session createSession(String sessionId, ChannelHandlerContext ctx) {
+    public Session createSession(String sessionId, Channel channel) {
         Session session = sessions.get(sessionId);
         if (session != null) {
             log.info("session " + sessionId + " exist!");
@@ -31,12 +31,12 @@ public class TcpSessionManager extends ExchangeTcpSessionManager {
             session.close();
             log.info("session " + sessionId + " have been closed!");
         }
-        log.info("create new session " + sessionId + ", ctx -> " + ctx.toString());
+        log.info("create new session " + sessionId + ", channel -> " + channel.toString());
 
         session = new TcpSession();
         session.setSessionId(sessionId);
         session.access();
-        session.setConnection(createTcpConnection(session, ctx));
+        session.setConnection(createTcpConnection(session, channel));
         log.info("create new session " + sessionId + " successful!");
 
         for (SessionListener listener : sessionListeners) {
@@ -48,8 +48,8 @@ public class TcpSessionManager extends ExchangeTcpSessionManager {
 
     }
 
-    protected Connection createTcpConnection(Session session, ChannelHandlerContext ctx) {
-        Connection conn = new TcpConnection(ctx);
+    protected Connection createTcpConnection(Session session, Channel channel) {
+        Connection conn = new TcpConnection(channel);
         conn.setConnectionId(session.getSessionId());
         conn.setSession(session);
         return conn;

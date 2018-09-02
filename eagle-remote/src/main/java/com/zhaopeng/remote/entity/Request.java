@@ -2,15 +2,25 @@ package com.zhaopeng.remote.entity;
 
 import java.io.Serializable;
 
+import com.zhaopeng.remote.MessageWrapper;
+
+import lombok.Data;
+
 /**
  * Created by zhaopeng on 2016/11/4.
  */
+@Data
 public class Request implements Serializable {
 
     /**
      * 请求id
      */
     private String requestId;
+
+    private String sessionId;
+
+    private MessageWrapper.MessageProtocol protocol;
+
     /**
      * 请求数据
      */
@@ -23,75 +33,56 @@ public class Request implements Serializable {
     // 参数
     private Object[] parameters;
 
-    private String version;
+    private Object body;
 
+    private String version;
 
     public boolean heartEvent = false;
 
     public boolean twoWay = true;
 
-    public String getRequestId() {
-        return requestId;
-    }
 
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
+    public Request(){
+
     }
 
 
-    public String getVersion() {
-        return version;
+    public Request(MessageWrapper.MessageProtocol protocol, String sessionId, Object body) {
+        this.protocol = protocol;
+        this.sessionId = sessionId;
+        this.body = body;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public enum MessageProtocol {
+        CONNECT, CLOSE, HEART_BEAT, SEND, RECEIVE, NOTIFY, REPLY, NO_CONNECT
     }
 
-    public boolean isHeartEvent() {
-        return heartEvent;
+
+    public boolean isConnect() {
+        return Request.MessageProtocol.CONNECT.equals(this.protocol);
     }
 
-    public void setHeartEvent(boolean heartEvent) {
-        this.heartEvent = heartEvent;
+    public boolean isClose() {
+        return Request.MessageProtocol.CLOSE.equals(this.protocol);
     }
 
-    public boolean isTwoWay() {
-        return twoWay;
+    public boolean isHeartbeat() {
+        return Request.MessageProtocol.HEART_BEAT.equals(this.protocol);
     }
 
-    public void setTwoWay(boolean twoWay) {
-        this.twoWay = twoWay;
+    public boolean isSend() {
+        return Request.MessageProtocol.SEND.equals(this.protocol);
     }
 
-    public String getClassName() {
-        return className;
+    public boolean isNotify() {
+        return Request.MessageProtocol.NOTIFY.equals(this.protocol);
     }
 
-    public void setClassName(String className) {
-        this.className = className;
+    public boolean isReply() {
+        return Request.MessageProtocol.REPLY.equals(this.protocol);
     }
 
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
-    }
-
-    public Class<?>[] getParameterTypes() {
-        return parameterTypes;
-    }
-
-    public void setParameterTypes(Class<?>[] parameterTypes) {
-        this.parameterTypes = parameterTypes;
-    }
-
-    public Object[] getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(Object[] parameters) {
-        this.parameters = parameters;
+    public boolean isNoKeepAliveMessage() {
+        return Request.MessageProtocol.NO_CONNECT.equals(this.protocol);
     }
 }

@@ -1,8 +1,10 @@
 package com.zhaopeng.remote.session.tcp.connector;
 
 import com.zhaopeng.remote.MessageWrapper;
+import com.zhaopeng.remote.entity.Request;
 import com.zhaopeng.remote.session.Session;
 import com.zhaopeng.remote.session.tcp.manager.TcpSessionManager;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
@@ -13,25 +15,25 @@ public abstract class ExchangeTcpConnector<T> extends ExchangeConnector<T> {
 
     protected TcpSessionManager tcpSessionManager = null;
 
-    public abstract void connect(ChannelHandlerContext ctx, MessageWrapper wrapper);
+    public abstract void connect(Channel channel, Request request);
 
-    public abstract void close(MessageWrapper wrapper);
+    public abstract void close(Request request);
 
     /**
      * 会话心跳
      *
      * @param wrapper
      */
-    public abstract void heartbeatClient(MessageWrapper wrapper);
+    public abstract void heartbeatClient(Request request);
 
     /**
      * 接收客户端消息通知响应
      *
      * @param wrapper
      */
-    public abstract void responseSendMessage(MessageWrapper wrapper);
+    public abstract void responseSendMessage(Request request);
 
-    public abstract void responseNoKeepAliveMessage(ChannelHandlerContext ctx, MessageWrapper wrapper);
+    public abstract void responseNoKeepAliveMessage(Channel channel, Request request);
     @Override
     public void send(String sessionId, T message) throws Exception {
         super.send(tcpSessionManager, sessionId, message);

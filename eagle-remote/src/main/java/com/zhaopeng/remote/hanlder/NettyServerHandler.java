@@ -25,9 +25,7 @@ public class NettyServerHandler extends ChannelDuplexHandler {
 
     private final Map<String, Channel> channels = new ConcurrentHashMap<>();
 
-    private TcpConnector tcpConnector = null;
 
-    public static final AttributeKey<String> SERVER_SESSION_HOOK = AttributeKey.valueOf("SERVER_SESSION_HOOK");
 
     public NettyServerHandler(Url url, ChannelHandler channelHandler) {
         if (url == null) {
@@ -65,11 +63,6 @@ public class NettyServerHandler extends ChannelDuplexHandler {
 
         handler.received(ctx.channel(), msg);
 
-        /**
-         * 拿到msg中的body 取出requestId，建立session
-         */
-
-        this.receive(ctx, null);
 
     }
 
@@ -85,42 +78,6 @@ public class NettyServerHandler extends ChannelDuplexHandler {
 
     }
 
-    private void receive(ChannelHandlerContext ctx, MessageWrapper wrapper) {
-        if (wrapper.isConnect()) {
-            isConnect0(ctx, wrapper);
-        } else if (wrapper.isClose()) {
-            tcpConnector.close(wrapper);
-        } else if (wrapper.isHeartbeat()) {
-            tcpConnector.heartbeatClient(wrapper);
-        } else if (wrapper.isSend()) {
-            tcpConnector.responseSendMessage(wrapper);
-        } else if (wrapper.isNoKeepAliveMessage()) {
-            tcpConnector.responseNoKeepAliveMessage(ctx, wrapper);
-        }
-    }
 
-    private void isConnect0(ChannelHandlerContext ctx, MessageWrapper wrapper) {
-        String sessionId = wrapper.getSessionId();
-        String sessionId0 = getChannelSessionHook(ctx);
-        if (sessionId.equals(sessionId0)) {
-            log.info("tcpConnector reconnect sessionId -> " + sessionId + ", ctx -> " + ctx.toString());
-            tcpConnector.responseSendMessage(wrapper);
-        } else {
-            log.info(
-                "tcpConnector connect sessionId -> " + sessionId + ", sessionId0 -> " + sessionId0 + ", ctx -> " + ctx
-                    .toString());
-            tcpConnector.connect(ctx, wrapper);
-            setChannelSessionHook(ctx, sessionId);
-            log.info("create channel attr sessionId " + sessionId + " successful, ctx -> " + ctx.toString());
-        }
-    }
-
-    private String getChannelSessionHook(ChannelHandlerContext ctx) {
-        return ctx.channel().attr(SERVER_SESSION_HOOK).get();
-    }
-
-    private void setChannelSessionHook(ChannelHandlerContext ctx, String sessionId) {
-        ctx.channel().attr(SERVER_SESSION_HOOK).set(sessionId);
-    }
 
 }

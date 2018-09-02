@@ -2,8 +2,9 @@ package com.zhaopeng.remote.session.tcp.connector;
 
 import com.zhaopeng.common.exception.LostConnectException;
 import com.zhaopeng.common.exception.PushException;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -13,14 +14,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NoKeepAliveTcpConnection<T> {
 
-    private ChannelHandlerContext cxt;
+    private Channel channel;
 
-    public NoKeepAliveTcpConnection(ChannelHandlerContext cxt) {
-        this.cxt = cxt;
+    public NoKeepAliveTcpConnection(Channel channel) {
+        this.channel = channel;
     }
 
     public void close() {
-        cxt.close();
+        channel.close();
         log.info("the connection have been destroyed!");
     }
 
@@ -37,8 +38,7 @@ public class NoKeepAliveTcpConnection<T> {
         boolean sent = true;
         int timeout = 60;
         try {
-            ChannelFuture cf = cxt.write(message);
-            cxt.flush();
+            ChannelFuture cf = channel.writeAndFlush(message);
             if (sent) {
                 success = cf.await(timeout);
             }
