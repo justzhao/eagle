@@ -93,8 +93,10 @@ public class TcpSession implements Session {
         sessionManager.removeSession(sessionId);
         listeners.clear();
         listeners = null;
-
         connecting = false;
+        connection.close();
+
+        connection = null;
         closing = false;
         sessionId = null;
         sessionManager = null;

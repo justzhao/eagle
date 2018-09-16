@@ -246,7 +246,8 @@ public class NettyChannelHandler implements ChannelHandler {
                     break;
                 case DISCONNECTED:
                     try {
-                        disconnected(channel);
+                       // disconnected(channel);
+                        tcpConnector.close(message);
                     } catch (Exception e) {
                         log.warn("ChannelEventRunnable handle " + state + " operation error, channel is " + channel, e);
                     }
